@@ -7,6 +7,7 @@ import { ITaskInput } from "../../interfaces/taskinput.interface";
 
 import { useState } from "react";
 import { DateTime } from "luxon";
+import { useNavigate } from "react-router-dom";
 
 interface ITaskUpdateFormProps {
   onSubmit: (name: string, description: string, date: Date) => void;
@@ -24,6 +25,8 @@ export const TaskUpdateForm = ({
     description: initialTaskData.description,
     date: initialTaskData.date,
   });
+
+  const navigate = useNavigate();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -90,13 +93,19 @@ export const TaskUpdateForm = ({
           />
         </Stack>
 
-        <Button
-          variant="contained"
-          sx={{ marginTop: 3, alignSelf: "flex-start" }}
-          type="submit"
-        >
-          Update
-        </Button>
+        <Stack spacing={2} marginTop={3} direction="row">
+          <Button variant="contained" type="submit">
+            Update
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            Cancel
+          </Button>
+        </Stack>
       </Stack>
     </Container>
   );

@@ -6,6 +6,7 @@ import { Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { ITaskInput } from "../../interfaces/taskinput.interface";
 import { DateTime } from "luxon";
+import { useNavigate } from "react-router-dom";
 
 interface ITaskCreateFormProps {
   onSubmit: (name: string, description: string, date: Date) => void;
@@ -18,6 +19,8 @@ export const TaskCreateForm = ({ onSubmit }: ITaskCreateFormProps) => {
     description: "",
     date: new Date(),
   });
+
+  const navigate = useNavigate();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -83,14 +86,19 @@ export const TaskCreateForm = ({ onSubmit }: ITaskCreateFormProps) => {
             disableMaskedInput={true}
           />
         </Stack>
-
-        <Button
-          variant="contained"
-          sx={{ marginTop: 3, alignSelf: "flex-start" }}
-          type="submit"
-        >
-          Create
-        </Button>
+        <Stack spacing={2} marginTop={3} direction="row">
+          <Button variant="contained" type="submit">
+            Create
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            Go back
+          </Button>
+        </Stack>
       </Stack>
     </Container>
   );
