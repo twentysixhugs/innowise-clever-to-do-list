@@ -7,6 +7,7 @@ import {
   Collapse,
   Checkbox,
   Stack,
+  Button,
 } from "@mui/material";
 import {
   DeleteOutlined,
@@ -23,6 +24,8 @@ interface ITaskEntryProps {
   description: string;
   isCompleted: boolean;
   onIsCompletedChange: React.ChangeEventHandler<HTMLInputElement>;
+  onEdit: React.MouseEventHandler<HTMLButtonElement>;
+  onDelete: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export const TaskEntry = ({
@@ -30,11 +33,31 @@ export const TaskEntry = ({
   description,
   isCompleted,
   onIsCompletedChange,
+  onEdit,
+  onDelete,
 }: ITaskEntryProps) => {
   const [expanded, setExpanded] = useState(false);
+  const [confirmDeletion, setConfirmDeletion] = useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const handleDeleteClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    setConfirmDeletion(!confirmDeletion);
+  };
+
+  const handleDeleteConfirm: React.MouseEventHandler<HTMLButtonElement> = (
+    e
+  ) => {
+    setConfirmDeletion(false);
+    onDelete(e);
+  };
+
+  const handleDeleteCancel: React.MouseEventHandler<HTMLButtonElement> = (
+    e
+  ) => {
+    setConfirmDeletion(false);
   };
 
   return (
@@ -62,10 +85,10 @@ export const TaskEntry = ({
             <ExpandMoreIcon />
           </ExpandMore>
         )}
-        <IconButton>
+        <IconButton onClick={onEdit}>
           <EditOutlined color="action" />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={handleDeleteClick}>
           <DeleteOutlined color="action" />
         </IconButton>
       </CardActions>
@@ -73,6 +96,28 @@ export const TaskEntry = ({
         <Typography component="p" variant="subtitle1" marginTop={1}>
           {description}
         </Typography>
+      </Collapse>
+      <Collapse in={confirmDeletion} timeout="auto" unmountOnExit>
+        <Typography
+          component="p"
+          variant="subtitle1"
+          fontSize="1rem"
+          marginTop={2}
+        >
+          Are you sure you want to delete this task?
+        </Typography>
+        <Stack direction="row" spacing={2} marginTop={2}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteConfirm}
+          >
+            Delete
+          </Button>
+          <Button variant="contained" onClick={handleDeleteCancel}>
+            Cancel
+          </Button>
+        </Stack>
       </Collapse>
     </Card>
   );
