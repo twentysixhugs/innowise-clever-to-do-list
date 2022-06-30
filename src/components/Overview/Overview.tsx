@@ -8,11 +8,13 @@ import { TaskEntry } from "../TaskEntry/TaskEntry";
 interface IOverviewProps {
   tasks: ITask[];
   onIsTaskCompletedChange: (id: string) => void;
+  onTaskDelete: (id: string) => void;
 }
 
 export const Overview = ({
   tasks,
   onIsTaskCompletedChange,
+  onTaskDelete,
 }: IOverviewProps) => {
   const navigate = useNavigate();
 
@@ -25,7 +27,7 @@ export const Overview = ({
   };
 
   const handleTaskDelete = (id: string) => {
-    // TODO: Process deletion (it's already confirmed if this handler is called)
+    onTaskDelete(id);
   };
 
   return (

@@ -16,6 +16,7 @@ export interface ITasksContext {
     date: Date,
     id: string
   ) => void;
+  deleteTask: (id: string) => void;
 }
 
 const TasksContext = React.createContext({} as ITasksContext);
@@ -118,6 +119,10 @@ export const TasksStore = ({ children }: ITasksStoreProps) => {
     );
   };
 
+  const handleDeleteTask = (id: string) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
   return (
     <TasksContext.Provider
       value={{
@@ -125,6 +130,7 @@ export const TasksStore = ({ children }: ITasksStoreProps) => {
         toggleTaskCompletion: handleToggleTaskCompletion,
         createTask: handleCreateTask,
         updateTask: handleUpdateTask,
+        deleteTask: handleDeleteTask,
       }}
     >
       {children}
