@@ -1,7 +1,6 @@
 import { TextField, Typography, Container, Button } from "@mui/material";
-import { useState } from "react";
-
 import { Stack } from "@mui/material";
+import { useState } from "react";
 
 interface ISignUpFormProps {
   onSubmit: (
