@@ -8,7 +8,7 @@ interface ISignUpFormProps {
 
 export const SignUpForm = ({ onSubmit }: ISignUpFormProps) => {
   return (
-    <Container style={{ minHeight: "100vh" }}>
+    <Container sx={{ minHeight: "100vh" }}>
       <Stack
         component="form"
         justifyContent="center"
