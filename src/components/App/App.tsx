@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { TasksStore } from "../../context/TasksStore";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { SignIn } from "../../pages/SignIn";
 import { SignUp } from "../../pages/SignUp";
 import { TaskCreate } from "../../pages/TaskCreate";
@@ -15,27 +17,29 @@ export const App = () => {
   return (
     <BrowserRouter>
       <TasksStore>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Protected isLoggedIn={user}>
-                <TasksOverview />
-              </Protected>
-            }
-          />
-          <Route path="signin" element={<SignIn />} />
-          <Route path="signup" element={<SignUp />} />
-          <Route
-            path="new"
-            element={
-              <Protected isLoggedIn={user}>
-                <TaskCreate />
-              </Protected>
-            }
-          ></Route>
-          <Route path="edit/:id" element={<TaskUpdate />}></Route>
-        </Routes>
+        <LocalizationProvider dateAdapter={AdapterLuxon}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Protected isLoggedIn={user}>
+                  <TasksOverview />
+                </Protected>
+              }
+            />
+            <Route path="signin" element={<SignIn />} />
+            <Route path="signup" element={<SignUp />} />
+            <Route
+              path="new"
+              element={
+                <Protected isLoggedIn={user}>
+                  <TaskCreate />
+                </Protected>
+              }
+            ></Route>
+            <Route path="edit/:id" element={<TaskUpdate />}></Route>
+          </Routes>
+        </LocalizationProvider>
       </TasksStore>
     </BrowserRouter>
   );
