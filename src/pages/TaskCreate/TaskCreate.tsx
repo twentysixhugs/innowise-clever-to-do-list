@@ -8,7 +8,6 @@ export const TaskCreate = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (name: string, description: string, date: Date) => {
-    // отсюда хочу сделать запрос к firebase
     createTask(
       name,
       description,

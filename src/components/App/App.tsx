@@ -5,6 +5,7 @@ import { SignIn } from "../../pages/SignIn";
 import { SignUp } from "../../pages/SignUp";
 import { TaskCreate } from "../../pages/TaskCreate";
 import { TasksOverview } from "../../pages/TasksOverview";
+import { TaskUpdate } from "../../pages/TaskUpdate";
 import { Protected } from "../Protected";
 
 export const App = () => {
@@ -33,7 +34,7 @@ export const App = () => {
               </Protected>
             }
           ></Route>
-          <Route path="edit/:id" element={null}></Route>
+          <Route path="edit/:id" element={<TaskUpdate />}></Route>
         </Routes>
       </TasksStore>
     </BrowserRouter>
