@@ -1,16 +1,17 @@
 import { Overview } from "../../components/Overview";
-import { ITask } from "../../interfaces/task.interface";
+import { useTasks } from "../../context/TasksStore";
 
-interface ITasksOverviewProps {
-  tasks: ITask[];
-  onIsTaskCompletedChange: (id: string) => void;
-}
+export const TasksOverview = () => {
+  const { tasks, toggleTaskCompletion } = useTasks();
 
-export const TasksOverview = ({
-  tasks,
-  onIsTaskCompletedChange,
-}: ITasksOverviewProps) => {
+  const handleToggleTaskComplete = (id: string) => {
+    toggleTaskCompletion(id);
+  };
+
   return (
-    <Overview tasks={tasks} onIsTaskCompletedChange={onIsTaskCompletedChange} />
+    <Overview
+      tasks={tasks}
+      onIsTaskCompletedChange={handleToggleTaskComplete}
+    />
   );
 };

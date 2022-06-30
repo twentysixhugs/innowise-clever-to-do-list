@@ -1,18 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { TaskCreateForm } from "../../components/TaskCreateForm";
-import { ITask } from "../../interfaces/task.interface";
+import { useTasks } from "../../context/TasksStore";
 
-interface ITaskCreateProps {
-  onSubmit: (name: string, description: string, date: Date) => void;
-}
+export const TaskCreate = () => {
+  const { createTask } = useTasks();
 
-export const TaskCreate = ({ onSubmit }: ITaskCreateProps) => {
   const navigate = useNavigate();
 
   const handleSubmit = (name: string, description: string, date: Date) => {
-    // отсюда хочу сделать запрос к firebase и после ответа обновить контекст.
-    // пока вызываю обновление тасков в стейте
-    onSubmit(name, description, date);
+    // отсюда хочу сделать запрос к firebase
+    createTask(
+      name,
+      description,
+      date,
+      // временно id генерирую вот так, дальше будет из firebase
+      `${Math.floor(Math.random() * 1000000)}`
+    );
     navigate("/");
   };
   return <TaskCreateForm onSubmit={handleSubmit} />;
