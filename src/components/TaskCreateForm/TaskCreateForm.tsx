@@ -43,6 +43,7 @@ export const TaskCreateForm = ({ onSubmit }: ITaskCreateFormProps) => {
           variant="outlined"
           required
           type="text"
+          autoComplete="off"
           name="name"
           value={input.name}
           onChange={handleChange}
@@ -53,6 +54,7 @@ export const TaskCreateForm = ({ onSubmit }: ITaskCreateFormProps) => {
           variant="outlined"
           required
           type="text"
+          autoComplete="off"
           name="description"
           value={input.description}
           onChange={handleChange}

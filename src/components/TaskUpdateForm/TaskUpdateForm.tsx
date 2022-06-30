@@ -48,6 +48,7 @@ export const TaskUpdateForm = ({
           variant="outlined"
           required
           type="text"
+          autoComplete="off"
           name="name"
           value={input.name}
           onChange={handleChange}
@@ -59,6 +60,7 @@ export const TaskUpdateForm = ({
           required
           type="text"
           name="description"
+          autoComplete="off"
           value={input.description}
           onChange={handleChange}
           sx={{ marginTop: "1rem" }}
