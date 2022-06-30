@@ -28,7 +28,7 @@ export const App = () => {
     },
     {
       name: "Lorem ipsum dolor sit amet 3",
-      description: "Lorem ipsum dolor sit amet",
+      description: "",
       date: new Date(),
       isCompleted: true,
       id: "3",
