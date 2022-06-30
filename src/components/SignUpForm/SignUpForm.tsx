@@ -73,6 +73,7 @@ export const SignUpForm = ({ onSubmit }: ISignUpFormProps) => {
         <Button
           variant="contained"
           sx={{ marginTop: 3, alignSelf: "flex-start" }}
+          type="submit"
         >
           Sign up
         </Button>
