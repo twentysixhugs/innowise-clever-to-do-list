@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ITask } from "../../interfaces/task.interface";
 import { SignIn } from "../../pages/SignIn";
 import { SignUp } from "../../pages/SignUp";
-import { Overview } from "../Overview";
+import { TaskCreate } from "../../pages/TaskCreate";
+import { TasksOverview } from "../../pages/TasksOverview";
 import { Protected } from "../Protected";
 
 export const App = () => {
@@ -42,7 +43,9 @@ export const App = () => {
     },
   ]);
 
-  const handleIsTaskCompleteChange = (id: string) => {
+  const handleIsTaskCompletedChange = (id: string) => {
+    // Мне временно оно нужно для проверки, что все работает.
+    // Вызывать по идее надо будет из контекста
     setTasks(
       tasks.map((task) => {
         if (task.id === id) {
@@ -57,7 +60,51 @@ export const App = () => {
     );
   };
 
+  const handleTaskCreate = (name: string, description: string, date: Date) => {
+    // Мне временно оно нужно для проверки, что все работает.
+    // Вызывать по идее надо будет из контекста
+
+    setTasks([
+      ...tasks,
+      {
+        name,
+        description,
+        date,
+        isCompleted: false,
+        // це тоже временно. естественно, id будет генерировать firebase
+        id: `${Math.floor(Math.random() * 1000000)}`,
+      },
+    ]);
+  };
+
+  const handleTaskUpdate = (
+    name: string,
+    description: string,
+    date: Date,
+    id: string
+  ) => {
+    // Мне временно оно нужно для проверки, что все работает.
+    // Вызывать по идее надо будет из контекста
+
+    setTasks(
+      tasks.map((task) => {
+        if (task.id === id) {
+          return {
+            ...task,
+            name,
+            description,
+            date,
+          };
+        }
+
+        return task;
+      })
+    );
+  };
+
   return (
+    // Я сейчас перемещаю таски из пропсов, буду потом из контекста. Это временно
+    // Я хотел примерно построить структуру того, как приложение устроено
     <>
       <BrowserRouter>
         <Routes>
@@ -65,15 +112,20 @@ export const App = () => {
             path="/"
             element={
               <Protected isLoggedIn={user}>
-                <Overview
+                <TasksOverview
                   tasks={tasks}
-                  onIsTaskCompletedChange={handleIsTaskCompleteChange}
+                  onIsTaskCompletedChange={handleIsTaskCompletedChange}
                 />
               </Protected>
             }
           />
           <Route path="signin" element={<SignIn />} />
           <Route path="signup" element={<SignUp />} />
+          <Route
+            path="new"
+            element={<TaskCreate onSubmit={handleTaskCreate} />}
+          ></Route>
+          <Route path="edit/:id" element={null}></Route>
         </Routes>
       </BrowserRouter>
     </>
