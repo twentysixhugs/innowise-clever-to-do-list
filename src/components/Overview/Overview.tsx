@@ -30,7 +30,7 @@ export const Overview = ({
 
   return (
     <Container sx={{ minHeight: "100vh" }}>
-      <Stack spacing={3} marginTop={20}>
+      <Stack spacing={3} marginTop={20} marginBottom={10}>
         <Stack spacing={3} direction="row" alignItems="center">
           <Typography component="h1" variant="h2">
             {tasks.length} tasks today
