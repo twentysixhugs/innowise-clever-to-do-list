@@ -2,33 +2,17 @@ import { Container } from "@mui/system";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { ITask } from "../../interfaces/task.interface";
 import { TaskEntry } from "../TaskEntry/TaskEntry";
+import { useTasks } from "../../context/TasksStore";
 
-interface IOverviewProps {
-  tasks: ITask[];
-  onIsTaskCompletedChange: (id: string) => void;
-  onTaskDelete: (id: string) => void;
-}
-
-export const Overview = ({
-  tasks,
-  onIsTaskCompletedChange,
-  onTaskDelete,
-}: IOverviewProps) => {
+export const Overview = () => {
   const navigate = useNavigate();
 
   const handleTaskCreate = () => {
     navigate("/new");
   };
 
-  const handleTaskEdit = (id: string) => {
-    navigate(`/edit/${id}`);
-  };
-
-  const handleTaskDelete = (id: string) => {
-    onTaskDelete(id);
-  };
+  const { tasks } = useTasks();
 
   return (
     <Container sx={{ minHeight: "100vh" }}>
@@ -47,19 +31,11 @@ export const Overview = ({
 
         {tasks.map(({ name, description, isCompleted, id }) => (
           <TaskEntry
+            id={id}
             key={id}
             name={name}
             description={description}
             isCompleted={isCompleted}
-            onIsCompletedChange={() => {
-              onIsTaskCompletedChange(id);
-            }}
-            onEdit={() => {
-              handleTaskEdit(id);
-            }}
-            onDelete={() => {
-              handleTaskDelete(id);
-            }}
           />
         ))}
       </Stack>

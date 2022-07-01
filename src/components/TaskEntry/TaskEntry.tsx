@@ -18,40 +18,35 @@ import {
 } from "@mui/icons-material";
 import styled from "@emotion/styled";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTasks } from "../../context/TasksStore";
 
 interface ITaskEntryProps {
+  id: string;
   name: string;
   description: string;
   isCompleted: boolean;
-  onIsCompletedChange: React.ChangeEventHandler<HTMLInputElement>;
-  onEdit: React.MouseEventHandler<HTMLButtonElement>;
-  onDelete: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export const TaskEntry = ({
+  id,
   name,
   description,
   isCompleted,
-  onIsCompletedChange,
-  onEdit,
-  onDelete,
 }: ITaskEntryProps) => {
   const [expanded, setExpanded] = useState(false);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
+
+  const navigate = useNavigate();
+  const { toggleTaskCompletion, deleteTask } = useTasks();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
+  /* UI interaction */
   const handleDeleteClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     setConfirmDeletion(!confirmDeletion);
-  };
-
-  const handleDeleteConfirm: React.MouseEventHandler<HTMLButtonElement> = (
-    e
-  ) => {
-    setConfirmDeletion(false);
-    onDelete(e);
   };
 
   const handleDeleteCancel: React.MouseEventHandler<HTMLButtonElement> = (
@@ -60,11 +55,34 @@ export const TaskEntry = ({
     setConfirmDeletion(false);
   };
 
+  const handleDeleteConfirm: React.MouseEventHandler<HTMLButtonElement> = (
+    e
+  ) => {
+    setConfirmDeletion(false);
+    deleteTask(id);
+    // сделать отсюда запрос
+    // в then обновить контекст
+  };
+
+  /* Completion */
+  const handleIsCompleteToggle: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
+    // сделать отсюда запрос
+    // в then обновить контекст
+    toggleTaskCompletion(id);
+  };
+
+  /* Redirects on click */
+  const handleEdit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    navigate(`/edit/${id}`);
+  };
+
   return (
     <Card sx={{ padding: "1rem" }}>
       <Stack direction="row" alignItems="center">
         <Checkbox
-          onChange={onIsCompletedChange}
+          onChange={handleIsCompleteToggle}
           checked={isCompleted}
           icon={<CircleOutlined />}
           checkedIcon={<CheckCircle />}
@@ -85,7 +103,7 @@ export const TaskEntry = ({
             <ExpandMoreIcon />
           </ExpandMore>
         )}
-        <IconButton onClick={onEdit}>
+        <IconButton onClick={handleEdit}>
           <EditOutlined color="action" />
         </IconButton>
         <IconButton onClick={handleDeleteClick}>
