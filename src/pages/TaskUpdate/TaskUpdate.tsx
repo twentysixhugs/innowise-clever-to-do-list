@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore";
@@ -8,12 +9,17 @@ export const TaskUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const taskToUpdate = tasks.find((task) => task.id === id)!;
+  const taskToUpdate = tasks.find((task) => task.id === id);
 
-  const handleSubmit = (name: string, description: string, date: Date) => {
-    updateTask(name, description, date, id!);
-    navigate("/");
-  };
+  const handleSubmit = useCallback(
+    (name: string, description: string, date: Date) => {
+      if (!taskToUpdate) return;
+
+      updateTask(name, description, date, id!);
+      navigate("/");
+    },
+    [updateTask, id, navigate, taskToUpdate]
+  );
 
   return (
     <TaskForm

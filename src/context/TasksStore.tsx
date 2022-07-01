@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { ITask } from "../interfaces/task.interface";
 
 export interface ITasksContext {
@@ -64,8 +64,8 @@ export const TasksStore = ({ children }: ITasksStoreProps) => {
     },
   ]);
 
-  const handleToggleTaskCompletion = (id: string) => {
-    setTasks(
+  const handleToggleTaskCompletion = useCallback((id: string) => {
+    setTasks((tasks) =>
       tasks.map((task) => {
         if (task.id === id) {
           return {
@@ -77,51 +77,47 @@ export const TasksStore = ({ children }: ITasksStoreProps) => {
         return task;
       })
     );
-  };
+  }, []);
 
-  const handleCreateTask = (
-    name: string,
-    description: string,
-    date: Date,
-    id: string
-  ) => {
-    setTasks([
-      ...tasks,
-      {
-        name,
-        description,
-        date,
-        id,
-        isCompleted: false,
-      },
-    ]);
-  };
+  const handleCreateTask = useCallback(
+    (name: string, description: string, date: Date, id: string) => {
+      setTasks((tasks) => [
+        ...tasks,
+        {
+          name,
+          description,
+          date,
+          id,
+          isCompleted: false,
+        },
+      ]);
+    },
+    []
+  );
 
-  const handleUpdateTask = (
-    name: string,
-    description: string,
-    date: Date,
-    id: string
-  ) => {
-    setTasks(
-      tasks.map((task) => {
-        if (task.id === id) {
-          return {
-            ...task,
-            name,
-            description,
-            date,
-          };
-        }
+  const handleUpdateTask = useCallback(
+    (name: string, description: string, date: Date, id: string) => {
+      setTasks((tasks) =>
+        tasks.map((task) => {
+          if (task.id === id) {
+            return {
+              ...task,
+              name,
+              description,
+              date,
+            };
+          }
 
-        return task;
-      })
-    );
-  };
+          return task;
+        })
+      );
+    },
+    []
+  );
 
-  const handleDeleteTask = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-  };
+  const handleDeleteTask = useCallback((id: string) => {
+    setTasks((tasks) => tasks.filter((task) => task.id !== id));
+  }, []);
 
   return (
     <TasksContext.Provider
