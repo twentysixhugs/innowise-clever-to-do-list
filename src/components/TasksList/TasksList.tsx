@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { TaskEntry } from "../TaskEntry/TaskEntry";
 import { useTasks } from "../../context/TasksStore";
 
-export const Overview = () => {
+export const TasksList = () => {
   const navigate = useNavigate();
 
   const handleTaskCreate = () => {

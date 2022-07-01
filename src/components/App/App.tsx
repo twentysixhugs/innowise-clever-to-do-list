@@ -7,7 +7,7 @@ import { TasksStore } from "../../context/TasksStore";
 import { SignIn } from "../../pages/SignIn";
 import { SignUp } from "../../pages/SignUp";
 import { TaskCreate } from "../../pages/TaskCreate";
-import { TasksOverview } from "../../pages/TasksOverview";
+import { Overview } from "../../pages/Overview";
 import { TaskUpdate } from "../../pages/TaskUpdate";
 import { Protected } from "../Protected";
 
@@ -24,7 +24,7 @@ export const App = () => {
               path="/"
               element={
                 <Protected isLoggedIn={user}>
-                  <TasksOverview />
+                  <Overview />
                 </Protected>
               }
             />
