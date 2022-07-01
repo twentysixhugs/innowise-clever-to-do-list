@@ -11,12 +11,18 @@ import { useNavigate } from "react-router-dom";
 
 interface ITaskUpdateFormProps {
   onSubmit: (name: string, description: string, date: Date) => void;
-  initialTaskData: ITask;
+  initialTaskData?: ITaskInput;
+  submitButtonText: string;
+  cancelButtonText: string;
+  title: string;
 }
 
-export const TaskUpdateForm = ({
+export const TaskForm = ({
   onSubmit,
-  initialTaskData,
+  initialTaskData = { name: "", description: "", date: new Date() },
+  submitButtonText,
+  cancelButtonText,
+  title,
 }: ITaskUpdateFormProps) => {
   // Если гарантируется, что initialTaskData и onSubmit не изменяются извне,
   // можно ли вот так делать изначальный стейт из пропсов?
@@ -61,7 +67,7 @@ export const TaskUpdateForm = ({
         onSubmit={handleSubmit}
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
-          Update task
+          {title}
         </Typography>
         <Stack spacing={2}>
           <TextField
@@ -95,7 +101,7 @@ export const TaskUpdateForm = ({
 
         <Stack spacing={2} marginTop={3} direction="row">
           <Button variant="contained" type="submit">
-            Update
+            {submitButtonText}
           </Button>
           <Button
             variant="outlined"
@@ -103,7 +109,7 @@ export const TaskUpdateForm = ({
               navigate(-1);
             }}
           >
-            Cancel
+            {cancelButtonText}
           </Button>
         </Stack>
       </Stack>

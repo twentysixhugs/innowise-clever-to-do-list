@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { TaskUpdateForm } from "../../components/TaskUpdateForm";
+import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore";
 
 export const TaskUpdate = () => {
@@ -16,6 +16,12 @@ export const TaskUpdate = () => {
   };
 
   return (
-    <TaskUpdateForm initialTaskData={taskToUpdate} onSubmit={handleSubmit} />
+    <TaskForm
+      initialTaskData={taskToUpdate}
+      onSubmit={handleSubmit}
+      cancelButtonText="Cancel"
+      submitButtonText="Update"
+      title="Update task"
+    />
   );
 };

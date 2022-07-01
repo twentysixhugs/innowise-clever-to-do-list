@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { TaskCreateForm } from "../../components/TaskCreateForm";
+import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore";
 
 export const TaskCreate = () => {
@@ -8,6 +8,7 @@ export const TaskCreate = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (name: string, description: string, date: Date) => {
+    // юз колбек
     createTask(
       name,
       description,
@@ -17,5 +18,12 @@ export const TaskCreate = () => {
     );
     navigate("/");
   };
-  return <TaskCreateForm onSubmit={handleSubmit} />;
+  return (
+    <TaskForm
+      onSubmit={handleSubmit}
+      cancelButtonText="Cancel"
+      submitButtonText="Create"
+      title="Create task"
+    />
+  );
 };
