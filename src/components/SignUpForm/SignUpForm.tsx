@@ -43,7 +43,6 @@ export const SignUpForm = ({ onSubmit }: ISignUpFormProps) => {
           label="Username"
           variant="outlined"
           required
-          type="text"
           name="username"
           value={input.username}
           onChange={handleChange}

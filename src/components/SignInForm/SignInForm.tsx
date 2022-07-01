@@ -37,7 +37,6 @@ export const SignInForm = ({ onSubmit }: ISignInFormProps) => {
           label="Username"
           variant="outlined"
           required
-          type="text"
           name="username"
           onChange={handleChange}
           value={input.username}
