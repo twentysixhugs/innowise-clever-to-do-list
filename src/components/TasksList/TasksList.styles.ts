@@ -1,19 +1,11 @@
-// import { IconButton, makeStyles, styled } from "@mui/material";
+import { IconButton, styled } from "@mui/material";
+import { Container } from "@mui/system";
 
-// export const IconBtn = styled(IconButton)({
-//   marginTop: 20,
-// });
+export const StyledIconButton = styled(IconButton)({
+  marginTop: "0.5rem !important",
+});
 
-// export const useStyles = makeStyles({
-//   iconBtn: {
-//     marginTop: 20,
-//   },
-// });
-
-// const Component = () => {
-//   const classes = useStyles({ })
-
-//   return <div className={classes.iconBtn}>
-// }
-
-export {};
+export const StyledContainer = styled(Container)({
+  minHeight: "100vh",
+  maxWidth: "60vw !important",
+});

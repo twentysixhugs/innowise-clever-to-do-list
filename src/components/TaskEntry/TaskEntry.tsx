@@ -1,6 +1,4 @@
 import {
-  Card,
-  CardActions,
   Typography,
   IconButton,
   IconButtonProps,
@@ -20,6 +18,7 @@ import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../context/TasksStore";
+import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
 
 interface ITaskEntryProps {
   id: string;
@@ -79,7 +78,7 @@ export const TaskEntry = ({
   };
 
   return (
-    <Card sx={{ padding: "1rem" }}>
+    <StyledPaper elevation={5}>
       <Stack direction="row" alignItems="center">
         <Checkbox
           onChange={handleIsCompleteToggle}
@@ -92,7 +91,7 @@ export const TaskEntry = ({
         </Typography>
       </Stack>
 
-      <CardActions sx={{ padding: 0 }}>
+      <StyledCardActions sx={{ padding: 0 }}>
         {description && (
           <ExpandMore
             expand={expanded}
@@ -109,7 +108,7 @@ export const TaskEntry = ({
         <IconButton onClick={handleDeleteClick}>
           <DeleteOutlined color="action" />
         </IconButton>
-      </CardActions>
+      </StyledCardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <Typography component="p" variant="subtitle1" marginTop={1}>
           {description}
@@ -137,7 +136,7 @@ export const TaskEntry = ({
           </Button>
         </Stack>
       </Collapse>
-    </Card>
+    </StyledPaper>
   );
 };
 
