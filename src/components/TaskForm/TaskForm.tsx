@@ -49,13 +49,13 @@ export const TaskForm = ({
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  const handleDateChange = (value: DateTime | null) => {
+  const handleDateChange = (value: Date | null) => {
     if (!value) {
       setInput({ ...input, date: null });
       return;
     }
 
-    setInput({ ...input, date: value.toJSDate() });
+    setInput({ ...input, date: value });
   };
 
   return (

@@ -1,14 +1,7 @@
 import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
-
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { TasksStore } from "../../context/TasksStore";
-import { SignIn } from "../../pages/SignIn";
-import { SignUp } from "../../pages/SignUp";
-import { TaskCreate } from "../../pages/TaskCreate";
-import { Overview } from "../../pages/Overview";
-import { TaskUpdate } from "../../pages/TaskUpdate";
 import { RouteSwitch } from "../RouteSwitch";
 
 export const App = () => {
@@ -17,7 +10,7 @@ export const App = () => {
 
   return (
     <TasksStore>
-      <LocalizationProvider dateAdapter={AdapterLuxon}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
         <RouteSwitch user={user} />
       </LocalizationProvider>
     </TasksStore>
