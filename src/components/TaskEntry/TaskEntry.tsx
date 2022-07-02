@@ -19,20 +19,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../context/TasksStore";
 import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
-
-interface ITaskEntryProps {
-  id: string;
-  name: string;
-  description: string;
-  isCompleted: boolean;
-}
+import { TaskEntryProps } from "./props.type";
 
 export const TaskEntry = ({
   id,
   name,
   description,
   isCompleted,
-}: ITaskEntryProps) => {
+}: TaskEntryProps) => {
   const [expanded, setExpanded] = useState(false);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
 

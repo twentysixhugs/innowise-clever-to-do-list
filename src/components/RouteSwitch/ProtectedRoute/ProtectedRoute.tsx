@@ -1,9 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-
-type ProtectedRouteProps = {
-  hasPermission: boolean;
-  navigateTo?: string;
-};
+import { ProtectedRouteProps } from "./props.type";
 
 export const ProtectedRoute = ({
   hasPermission,

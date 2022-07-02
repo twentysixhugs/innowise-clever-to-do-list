@@ -2,20 +2,11 @@ import { TextField, Typography, Container, Button } from "@mui/material";
 import { Stack } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import { ITask } from "../../interfaces/task.interface";
 import { ITaskInput } from "../../interfaces/taskinput.interface";
 
 import { useState } from "react";
-import { DateTime } from "luxon";
 import { useNavigate } from "react-router-dom";
-
-interface ITaskUpdateFormProps {
-  onSubmit: (name: string, description: string, date: Date) => void;
-  initialTaskData?: ITaskInput;
-  submitButtonText: string;
-  cancelButtonText: string;
-  title: string;
-}
+import { TaskUpdateFormProps } from "./props.type";
 
 export const TaskForm = ({
   onSubmit,
@@ -23,7 +14,7 @@ export const TaskForm = ({
   submitButtonText,
   cancelButtonText,
   title,
-}: ITaskUpdateFormProps) => {
+}: TaskUpdateFormProps) => {
   // Если гарантируется, что initialTaskData и onSubmit не изменяются извне,
   // можно ли вот так делать изначальный стейт из пропсов?
   const [input, setInput] = useState<ITaskInput>({
