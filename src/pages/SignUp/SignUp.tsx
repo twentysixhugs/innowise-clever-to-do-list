@@ -24,6 +24,7 @@ export const SignUp = () => {
     <Container sx={{ minHeight: "100vh" }}>
       <Stack
         component="form"
+        noValidate
         justifyContent="center"
         marginTop={20}
         onSubmit={handleSubmit}
