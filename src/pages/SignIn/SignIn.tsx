@@ -1,6 +1,8 @@
-import { TextField, Typography, Container, Button } from "@mui/material";
+import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
 import { useState } from "react";
+import { StyledContainer, StyledSubmitButton } from "./SignIn.styles";
+import { StyledTextField } from "./SignIn.styles";
 
 export const SignIn = () => {
   const [input, setInput] = useState({
@@ -44,11 +46,11 @@ export const SignIn = () => {
   };
 
   return (
-    <Container sx={{ minHeight: "100vh" }}>
+    <StyledContainer>
       <Stack
         component="form"
         justifyContent="center"
-        paddingTop={20}
+        paddingTop={15}
         onSubmit={handleSubmit}
         noValidate
       >
@@ -67,7 +69,7 @@ export const SignIn = () => {
           </Typography>
         ))}
 
-        <TextField
+        <StyledTextField
           label="Username"
           variant="outlined"
           required
@@ -75,9 +77,8 @@ export const SignIn = () => {
           name="username"
           onChange={handleChange}
           value={input.username}
-          sx={{ marginTop: "1rem" }}
         />
-        <TextField
+        <StyledTextField
           label="Password"
           variant="outlined"
           required
@@ -85,16 +86,11 @@ export const SignIn = () => {
           name="password"
           onChange={handleChange}
           value={input.password}
-          sx={{ marginTop: "1rem" }}
         />
-        <Button
-          variant="contained"
-          sx={{ marginTop: 3, alignSelf: "flex-start" }}
-          type="submit"
-        >
+        <StyledSubmitButton variant="contained" type="submit">
           Sign in
-        </Button>
+        </StyledSubmitButton>
       </Stack>
-    </Container>
+    </StyledContainer>
   );
 };

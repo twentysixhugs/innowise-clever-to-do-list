@@ -1,4 +1,4 @@
-import { TextField, Typography, Container, Button } from "@mui/material";
+import { TextField, Typography, Button } from "@mui/material";
 import { Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -7,6 +7,7 @@ import { ITaskInput } from "../../interfaces/taskinput.interface";
 
 import { useNavigate } from "react-router-dom";
 import { TaskUpdateFormProps } from "./props.type";
+import { StyledContainer } from "./TaskForm.styles";
 
 export const TaskForm = ({
   onSubmit,
@@ -74,12 +75,12 @@ export const TaskForm = ({
   };
 
   return (
-    <Container sx={{ minHeight: "100vh" }}>
+    <StyledContainer>
       <Stack
         component="form"
         noValidate
         justifyContent="center"
-        paddingTop={20}
+        paddingTop={15}
         onSubmit={handleSubmit}
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
@@ -138,6 +139,6 @@ export const TaskForm = ({
           </Button>
         </Stack>
       </Stack>
-    </Container>
+    </StyledContainer>
   );
 };

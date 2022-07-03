@@ -17,7 +17,7 @@ export const TasksList = () => {
 
   return (
     <StyledContainer>
-      <Stack spacing={3} paddingTop={20} paddingBottom={10}>
+      <Stack spacing={3} paddingTop={15} paddingBottom={10}>
         <Stack spacing={3} direction="row" alignItems="center">
           <Typography component="h1" variant="h2">
             {tasks.length} tasks today

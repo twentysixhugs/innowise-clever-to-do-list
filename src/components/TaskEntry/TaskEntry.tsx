@@ -85,7 +85,7 @@ export const TaskEntry = ({
         </Typography>
       </Stack>
 
-      <StyledCardActions sx={{ padding: 0 }}>
+      <StyledCardActions>
         {description && (
           <ExpandMore
             expand={expanded}

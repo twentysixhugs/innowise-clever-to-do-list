@@ -6,6 +6,6 @@ export const StyledIconButton = styled(IconButton)({
 });
 
 export const StyledContainer = styled(Container)({
-  minHeight: "100vh",
+  minHeight: "calc(100vh - 70px) !important",
   maxWidth: "60vw !important",
 });

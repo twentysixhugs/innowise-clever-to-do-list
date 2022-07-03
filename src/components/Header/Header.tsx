@@ -7,18 +7,7 @@ export const Header = () => {
   };
 
   return (
-    <StyledBox
-      component="header"
-      sx={{
-        display: "flex",
-        justifyContent: "flex-end",
-        alignItems: "center",
-        paddingInline: "20px",
-        minWidth: "100%",
-        minHeight: "70px",
-        borderRadius: 0,
-      }}
-    >
+    <StyledBox component="header">
       <Button onClick={handleSignout}>Sign out</Button>
     </StyledBox>
   );

@@ -5,11 +5,13 @@ import { SignIn } from "../../pages/SignIn";
 import { SignUp } from "../../pages/SignUp";
 import { TaskCreate } from "../../pages/TaskCreate";
 import { TaskUpdate } from "../../pages/TaskUpdate";
+import { Header } from "../Header";
 
 export const RouteSwitch = ({ user }: { user: boolean }) => {
   // Пока нет сервисов firebase, пробрасываю через пропсы
   return (
     <BrowserRouter>
+      <Header />
       <Routes>
         <Route
           path="/"

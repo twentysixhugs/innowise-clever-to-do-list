@@ -1,6 +1,8 @@
-import { TextField, Typography, Container, Button } from "@mui/material";
+import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
 import { useState } from "react";
+import { StyledContainer, StyledSubmitButton } from "./SignUp.styles";
+import { StyledTextField } from "./SignUp.styles";
 
 export const SignUp = () => {
   const [input, setInput] = useState({
@@ -57,12 +59,12 @@ export const SignUp = () => {
   };
 
   return (
-    <Container sx={{ minHeight: "100vh" }}>
+    <StyledContainer>
       <Stack
         component="form"
         noValidate
         justifyContent="center"
-        paddingTop={20}
+        paddingTop={15}
         onSubmit={handleSubmit}
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
@@ -79,16 +81,15 @@ export const SignUp = () => {
             {err[1]}
           </Typography>
         ))}
-        <TextField
+        <StyledTextField
           label="Username"
           variant="outlined"
           required
           name="username"
           value={input.username}
           onChange={handleChange}
-          sx={{ marginTop: "1rem" }}
         />
-        <TextField
+        <StyledTextField
           label="Password"
           variant="outlined"
           required
@@ -96,9 +97,8 @@ export const SignUp = () => {
           name="password"
           value={input.password}
           onChange={handleChange}
-          sx={{ marginTop: "1rem" }}
         />
-        <TextField
+        <StyledTextField
           label="Confirm password"
           variant="outlined"
           required
@@ -106,16 +106,11 @@ export const SignUp = () => {
           name="passwordConfirm"
           value={input.passwordConfirm}
           onChange={handleChange}
-          sx={{ marginTop: "1rem" }}
         />
-        <Button
-          variant="contained"
-          sx={{ marginTop: 3, alignSelf: "flex-start" }}
-          type="submit"
-        >
+        <StyledSubmitButton variant="contained" type="submit">
           Sign up
-        </Button>
+        </StyledSubmitButton>
       </Stack>
-    </Container>
+    </StyledContainer>
   );
 };
