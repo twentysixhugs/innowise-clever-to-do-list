@@ -8,7 +8,17 @@ export const SignIn = () => {
     password: "",
   });
 
+  const errorMessages = {
+    username: "Username must not be empty",
+    password: "Password must not be empty",
+  };
+
+  const [errors, setErrors] = useState<
+    [field: keyof typeof input, message: string][]
+  >([]);
+
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setErrors([]);
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
@@ -16,25 +26,52 @@ export const SignIn = () => {
     e.preventDefault();
     const { username, password } = input;
 
-    console.log(username, password);
+    if (username && password) {
+      // submit
+    } else {
+      for (const el in input) {
+        if (!input[el as keyof typeof input]) {
+          setErrors((prev) => [
+            ...prev,
+            [
+              el as keyof typeof input,
+              errorMessages[el as keyof typeof errorMessages],
+            ],
+          ]);
+        }
+      }
+    }
   };
 
   return (
     <Container sx={{ minHeight: "100vh" }}>
       <Stack
         component="form"
-        noValidate
         justifyContent="center"
-        marginTop={20}
+        paddingTop={20}
         onSubmit={handleSubmit}
+        noValidate
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign in
         </Typography>
+        {errors.map((err) => (
+          <Typography
+            color="error"
+            key={err[0]}
+            component="span"
+            variant="subtitle1"
+          >
+            {"\u2022 "}
+            {err[1]}
+          </Typography>
+        ))}
+
         <TextField
           label="Username"
           variant="outlined"
           required
+          type="text"
           name="username"
           onChange={handleChange}
           value={input.username}

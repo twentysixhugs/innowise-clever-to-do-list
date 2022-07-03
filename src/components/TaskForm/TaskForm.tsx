@@ -1,10 +1,10 @@
 import { TextField, Typography, Container, Button } from "@mui/material";
 import { Stack } from "@mui/material";
+import { useEffect, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { ITaskInput } from "../../interfaces/taskinput.interface";
 
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TaskUpdateFormProps } from "./props.type";
 
@@ -15,34 +15,58 @@ export const TaskForm = ({
   cancelButtonText,
   title,
 }: TaskUpdateFormProps) => {
-  // Если гарантируется, что initialTaskData и onSubmit не изменяются извне,
-  // можно ли вот так делать изначальный стейт из пропсов?
   const [input, setInput] = useState<ITaskInput>({
     name: initialTaskData.name,
     description: initialTaskData.description,
     date: initialTaskData.date,
   });
 
+  const errorMessages = {
+    name: "Task name must not be empty",
+    description: "Task description must not be empty",
+    date: "Task date must not be empty",
+  };
+
+  const [errors, setErrors] = useState<
+    [field: keyof typeof input, message: string][]
+  >([]);
+
   const navigate = useNavigate();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    setErrors((errors) => []);
     e.preventDefault();
     const { name, description, date } = input;
 
     if (name && description && date) {
       onSubmit(name, description, date);
     } else {
-      // show validation error
+      const validationErrors: typeof errors = [];
+
+      for (const el in input) {
+        if (!input[el as keyof typeof input]) {
+          validationErrors.push([
+            el as keyof typeof input,
+            errorMessages[el as keyof typeof errorMessages],
+          ]);
+        }
+      }
+
+      setErrors((errors) => [...errors, ...validationErrors]);
     }
   };
+
+  useEffect(() => {
+    console.log(input);
+  }, [input]);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (value: Date | null) => {
-    if (!value) {
-      setInput({ ...input, date: null });
+    if (!value || !value.getDate()) {
+      setInput({ ...input, date: new Date() });
       return;
     }
 
@@ -53,19 +77,30 @@ export const TaskForm = ({
     <Container sx={{ minHeight: "100vh" }}>
       <Stack
         component="form"
+        noValidate
         justifyContent="center"
-        marginTop={20}
+        paddingTop={20}
         onSubmit={handleSubmit}
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
           {title}
         </Typography>
-        <Stack spacing={2}>
+        {errors.map((err) => (
+          <Typography
+            color="error"
+            key={err[0]}
+            component="span"
+            variant="subtitle1"
+          >
+            {"\u2022 "}
+            {err[1]}
+          </Typography>
+        ))}
+        <Stack spacing={2} marginTop="1rem">
           <TextField
             label="Task name"
             variant="outlined"
             required
-            type="text"
             autoComplete="off"
             name="name"
             value={input.name}
@@ -75,7 +110,6 @@ export const TaskForm = ({
             label="Task description"
             variant="outlined"
             required
-            type="text"
             name="description"
             autoComplete="off"
             value={input.description}

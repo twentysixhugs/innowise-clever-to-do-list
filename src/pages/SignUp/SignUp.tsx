@@ -9,7 +9,18 @@ export const SignUp = () => {
     passwordConfirm: "",
   });
 
+  const errorMessages = {
+    username: "Username must not be empty",
+    password: "Password must not be empty",
+    passwordConfirm: "Passwords do not match",
+  };
+
+  const [errors, setErrors] = useState<
+    [field: keyof typeof input, message: string][]
+  >([]);
+
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setErrors([]);
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
@@ -17,7 +28,32 @@ export const SignUp = () => {
     e.preventDefault();
     const { username, password, passwordConfirm } = input;
 
-    console.log(username, password, passwordConfirm);
+    if (username && password && passwordConfirm) {
+      // submit
+    } else {
+      const validationErrors: typeof errors = [];
+
+      for (const el in input) {
+        if (!input[el as keyof typeof input]) {
+          validationErrors.push([
+            el as keyof typeof input,
+            errorMessages[el as keyof typeof errorMessages],
+          ]);
+        }
+      }
+
+      if (
+        password !== passwordConfirm &&
+        !validationErrors.find((err) => err[0] === "passwordConfirm")
+      ) {
+        validationErrors.push([
+          "passwordConfirm",
+          errorMessages.passwordConfirm,
+        ]);
+      }
+
+      setErrors([...errors, ...validationErrors]);
+    }
   };
 
   return (
@@ -26,12 +62,23 @@ export const SignUp = () => {
         component="form"
         noValidate
         justifyContent="center"
-        marginTop={20}
+        paddingTop={20}
         onSubmit={handleSubmit}
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign up
         </Typography>
+        {errors.map((err) => (
+          <Typography
+            color="error"
+            key={err[0]}
+            component="span"
+            variant="subtitle1"
+          >
+            {"\u2022 "}
+            {err[1]}
+          </Typography>
+        ))}
         <TextField
           label="Username"
           variant="outlined"
