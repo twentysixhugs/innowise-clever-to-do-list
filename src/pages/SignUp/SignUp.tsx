@@ -1,17 +1,28 @@
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
+import { Button } from "@mui/material";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  AuthError,
+} from "firebase/auth";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
 import {
+  validateEmail,
   validatePassword,
   validatePasswordConfirm,
   validateUsername,
 } from "../../helpers/validation";
-import { StyledContainer, StyledSubmitButton } from "./SignUp.styles";
+import { UsernameEmailService } from "../../services/DatabaseService";
+import { StyledContainer } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
 
 const SignUp = () => {
   const [input, setInput] = useState({
+    email: "",
     username: "",
     password: "",
     passwordConfirm: "",
@@ -20,10 +31,17 @@ const SignUp = () => {
   const [errors, setErrors] = useState<{
     [K in keyof typeof input]: FormError | "";
   }>({
+    email: "",
     username: "",
     password: "",
     passwordConfirm: "",
   });
+
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
@@ -32,9 +50,10 @@ const SignUp = () => {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const { username, password, passwordConfirm } = input;
+    const { username, email, password, passwordConfirm } = input;
 
     const validationResult: { [K in keyof typeof input]: FormError | "" } = {
+      email: validateEmail(email),
       username: validateUsername(username),
       password: validatePassword(password),
       passwordConfirm: validatePasswordConfirm(password, passwordConfirm),
@@ -43,8 +62,27 @@ const SignUp = () => {
     // Either set to empty strings or FormError members
     setErrors(validationResult);
 
+    // Anyway, reset server error because we make another request
+    setServerError(null);
+
     if (Object.values(validationResult).every((error) => error === "")) {
-      // submit
+      const auth = getAuth();
+
+      setIsLoading(true);
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          return UsernameEmailService.createOne({ username, email });
+        })
+        .then((userEmailRef) => {
+          navigate("/");
+        })
+        .catch((err: AuthError) => {
+          setServerError(err.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
 
@@ -68,8 +106,26 @@ const SignUp = () => {
         );
     }
 
+    if (serverError) {
+      components.push(
+        <Typography
+          key={serverError}
+          color="error"
+          component="span"
+          variant="subtitle1"
+        >
+          {"\u2022 "}
+          {serverError}
+        </Typography>
+      );
+    }
+
     return components;
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <StyledContainer>
@@ -93,6 +149,15 @@ const SignUp = () => {
           onChange={handleChange}
         />
         <StyledTextField
+          label="Email"
+          variant="outlined"
+          required
+          name="email"
+          type="email"
+          value={input.email}
+          onChange={handleChange}
+        />
+        <StyledTextField
           label="Password"
           variant="outlined"
           required
@@ -110,9 +175,15 @@ const SignUp = () => {
           value={input.passwordConfirm}
           onChange={handleChange}
         />
-        <StyledSubmitButton variant="contained" type="submit">
-          Sign up
-        </StyledSubmitButton>
+
+        <Stack spacing={2} marginTop={4} direction="row">
+          <Button variant="contained" type="submit">
+            Sign up
+          </Button>
+          <Button variant="contained" color="warning">
+            Sign up with Google
+          </Button>
+        </Stack>
       </Stack>
     </StyledContainer>
   );

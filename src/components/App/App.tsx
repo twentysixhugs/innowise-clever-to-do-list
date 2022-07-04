@@ -5,13 +5,10 @@ import { TasksStore } from "../../context/TasksStore";
 import { RouteSwitch } from "../RouteSwitch";
 
 export const App = () => {
-  //TODO: Replace with firebase
-  const [user, setUser] = useState(true);
-
   return (
     <TasksStore>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <RouteSwitch user={user} />
+        <RouteSwitch />
       </LocalizationProvider>
     </TasksStore>
   );

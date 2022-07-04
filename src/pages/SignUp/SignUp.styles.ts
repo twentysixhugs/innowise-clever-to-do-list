@@ -10,8 +10,3 @@ export const StyledContainer = styled(Container)({
 export const StyledTextField = styled(TextField)({
   marginTop: "1rem",
 });
-
-export const StyledSubmitButton = styled(Button)({
-  alignSelf: "flex-start",
-  marginTop: "2rem",
-});

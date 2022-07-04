@@ -1,10 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { Loader } from "../../Loader";
 import { ProtectedRouteProps } from "./props.type";
 
 export const ProtectedRoute = ({
   hasPermission,
+  isLoading,
   navigateTo,
 }: ProtectedRouteProps) => {
+  if (isLoading) return <Loader />;
+
   if (!hasPermission) {
     return navigateTo ? <Navigate to={navigateTo} /> : null;
   }

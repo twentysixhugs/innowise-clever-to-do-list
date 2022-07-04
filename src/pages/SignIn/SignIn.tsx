@@ -1,23 +1,38 @@
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
+import { Button } from "@mui/material";
+import { AuthError, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
-import { validatePassword, validateUsername } from "../../helpers/validation";
-import { StyledContainer, StyledSubmitButton } from "./SignIn.styles";
+import {
+  validateEmail,
+  validateNotEmpty,
+  validatePassword,
+} from "../../helpers/validation";
+import { UsernameEmailService } from "../../services/DatabaseService";
+import { StyledContainer } from "./SignIn.styles";
 import { StyledTextField } from "./SignIn.styles";
 
 const SignIn = () => {
   const [input, setInput] = useState({
-    username: "",
+    email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState<{
     [K in keyof typeof input]: FormError | "";
   }>({
-    username: "",
+    email: "",
     password: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
@@ -26,18 +41,34 @@ const SignIn = () => {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const { username, password } = input;
+    const { email, password } = input;
 
     const validationResult: { [K in keyof typeof input]: FormError | "" } = {
-      username: validateUsername(username),
-      password: validatePassword(password),
+      email: validateEmail(email),
+      password: validateNotEmpty(password, FormError.EmptyPassword),
     };
 
     // Either set to empty strings or FormError members
     setErrors(validationResult);
 
+    // Anyway, reset server error because we make another request
+    setServerError(null);
+
     if (Object.values(validationResult).every((error) => error === "")) {
-      // submit
+      const auth = getAuth();
+
+      setIsLoading(true);
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredentials) => {
+          navigate("/");
+        })
+        .catch((err: AuthError) => {
+          setServerError(err.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
 
@@ -61,8 +92,24 @@ const SignIn = () => {
         );
     }
 
+    if (serverError) {
+      components.push(
+        <Typography
+          key={serverError}
+          color="error"
+          component="span"
+          variant="subtitle1"
+        >
+          {"\u2022 "}
+          {serverError}
+        </Typography>
+      );
+    }
+
     return components;
   };
+
+  if (isLoading) return <Loader />;
 
   return (
     <StyledContainer>
@@ -74,15 +121,16 @@ const SignIn = () => {
         onSubmit={handleSubmit}
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
-          Sign up
+          Sign in
         </Typography>
         {getComponentsFromErrors()}
         <StyledTextField
-          label="Username"
+          label="Email"
           variant="outlined"
           required
-          name="username"
-          value={input.username}
+          name="email"
+          type="email"
+          value={input.email}
           onChange={handleChange}
         />
         <StyledTextField
@@ -94,9 +142,14 @@ const SignIn = () => {
           value={input.password}
           onChange={handleChange}
         />
-        <StyledSubmitButton variant="contained" type="submit">
-          Sign up
-        </StyledSubmitButton>
+        <Stack spacing={2} marginTop={4} direction="row">
+          <Button variant="contained" type="submit">
+            Sign in
+          </Button>
+          <Button variant="contained" color="warning">
+            Sign in with Google
+          </Button>
+        </Stack>
       </Stack>
     </StyledContainer>
   );

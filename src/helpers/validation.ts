@@ -12,6 +12,14 @@ export function validatePassword(password: string): "" | FormError {
   return "";
 }
 
+export function validateNotEmpty(value: string, error: FormError) {
+  if (!value) {
+    return error;
+  }
+
+  return "";
+}
+
 export function validatePasswordConfirm(
   password: string,
   passwordConfirm: string
@@ -30,6 +38,19 @@ export function validateUsername(username: string): "" | FormError {
 
   if (!username.match(/^[a-zA-Z0-9]+$/)) {
     return FormError.AllowedUsernameCharacters;
+  }
+
+  return "";
+}
+
+export function validateEmail(email: string): "" | FormError {
+  if (!email) {
+    return FormError.EmptyEmail;
+  }
+
+  //eslint-disable-next-line
+  if (!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+    return FormError.AllowedEmailCharacters;
   }
 
   return "";

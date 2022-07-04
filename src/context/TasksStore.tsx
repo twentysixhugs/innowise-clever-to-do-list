@@ -41,36 +41,7 @@ export class TasksStore extends React.Component<
   TasksStoreState
 > {
   state: TasksStoreState = {
-    tasks: [
-      {
-        name: "Lorem ipsum dolor sit amet 1",
-        description: "Lorem ipsum dolor sit amet",
-        date: new Date(),
-        isCompleted: true,
-        id: "1",
-      },
-      {
-        name: "Lorem ipsum dolor sit amet 2",
-        description: "Lorem ipsum dolor sit amet",
-        date: new Date(),
-        isCompleted: false,
-        id: "2",
-      },
-      {
-        name: "Lorem ipsum dolor sit amet 3",
-        description: "",
-        date: new Date(),
-        isCompleted: true,
-        id: "3",
-      },
-      {
-        name: "Lorem ipsum dolor sit amet 4",
-        description: "Lorem ipsum dolor sit amet",
-        date: new Date(),
-        isCompleted: false,
-        id: "4",
-      },
-    ],
+    tasks: [],
   };
 
   handleToggleTaskCompletion = (id: string) => {

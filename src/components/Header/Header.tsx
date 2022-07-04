@@ -1,15 +1,27 @@
-import { Button } from "@mui/material";
-import { StyledBox } from "./Header.styles";
+import { Link as RouterLink } from "react-router-dom";
+import { SignOut } from "../SignOut";
+import { StyledBox, StyledNav, StyledLink } from "./Header.styles";
 import { HeaderProps } from "./props.type";
 
-export const Header = ({ isLoggedIn }: HeaderProps) => {
-  const handleSignout: React.MouseEventHandler<HTMLButtonElement> = () => {
-    console.log("signed out");
-  };
+export const Header = ({ isLoggedIn, isLoading }: HeaderProps) => {
+  if (isLoading) {
+    return <StyledBox component="header" />;
+  }
 
   return (
     <StyledBox component="header">
-      {isLoggedIn && <Button onClick={handleSignout}>Sign out</Button>}
+      {isLoggedIn ? (
+        <SignOut />
+      ) : (
+        <StyledNav>
+          <StyledLink component={RouterLink} to="/signup">
+            Sign up
+          </StyledLink>
+          <StyledLink component={RouterLink} to="/signin">
+            Sign in
+          </StyledLink>
+        </StyledNav>
+      )}
     </StyledBox>
   );
 };
