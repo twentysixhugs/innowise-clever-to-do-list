@@ -4,6 +4,7 @@ import { Button } from "@mui/material";
 import { AuthError, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
 import {
   validateEmail,
@@ -26,6 +27,8 @@ const SignIn = () => {
     email: "",
     password: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -54,12 +57,17 @@ const SignIn = () => {
     if (Object.values(validationResult).every((error) => error === "")) {
       const auth = getAuth();
 
+      setIsLoading(true);
+
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredentials) => {
           navigate("/");
         })
         .catch((err: AuthError) => {
           setServerError(err.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   };
@@ -100,6 +108,8 @@ const SignIn = () => {
 
     return components;
   };
+
+  if (isLoading) return <Loader />;
 
   return (
     <StyledContainer>

@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
 import {
   validateEmail,
@@ -38,6 +39,8 @@ const SignUp = () => {
 
   const [serverError, setServerError] = useState<string | null>(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -65,6 +68,8 @@ const SignUp = () => {
     if (Object.values(validationResult).every((error) => error === "")) {
       const auth = getAuth();
 
+      setIsLoading(true);
+
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           return UsernameEmailService.createOne({ username, email });
@@ -74,6 +79,9 @@ const SignUp = () => {
         })
         .catch((err: AuthError) => {
           setServerError(err.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     }
   };
@@ -114,6 +122,10 @@ const SignUp = () => {
 
     return components;
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <StyledContainer>
