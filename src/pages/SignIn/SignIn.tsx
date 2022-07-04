@@ -6,7 +6,7 @@ import { validatePassword, validateUsername } from "../../helpers/validation";
 import { StyledContainer, StyledSubmitButton } from "./SignIn.styles";
 import { StyledTextField } from "./SignIn.styles";
 
-export const SignIn = () => {
+const SignIn = () => {
   const [input, setInput] = useState({
     username: "",
     password: "",
@@ -101,3 +101,5 @@ export const SignIn = () => {
     </StyledContainer>
   );
 };
+
+export default SignIn;

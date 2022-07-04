@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore";
 
-export const TaskCreate = () => {
+const TaskCreate = () => {
   const { createTask } = useTasks();
 
   const navigate = useNavigate();
@@ -32,3 +32,5 @@ export const TaskCreate = () => {
     />
   );
 };
+
+export default TaskCreate;

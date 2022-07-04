@@ -1,5 +1,7 @@
 import { TasksList } from "../../components/TasksList";
 
-export const Overview = () => {
+const Overview = () => {
   return <TasksList />;
 };
+
+export default Overview;

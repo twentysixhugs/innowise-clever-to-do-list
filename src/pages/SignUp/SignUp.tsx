@@ -10,7 +10,7 @@ import {
 import { StyledContainer, StyledSubmitButton } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
 
-export const SignUp = () => {
+const SignUp = () => {
   const [input, setInput] = useState({
     username: "",
     password: "",
@@ -117,3 +117,5 @@ export const SignUp = () => {
     </StyledContainer>
   );
 };
+
+export default SignUp;

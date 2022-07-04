@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore";
 
-export const TaskUpdate = () => {
+const TaskUpdate = () => {
   const { tasks, updateTask } = useTasks();
 
   const { id } = useParams();
@@ -31,3 +31,5 @@ export const TaskUpdate = () => {
     />
   );
 };
+
+export default TaskUpdate;
