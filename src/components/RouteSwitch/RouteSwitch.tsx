@@ -11,7 +11,7 @@ export const RouteSwitch = ({ user }: { user: boolean }) => {
   // Пока нет сервисов firebase, пробрасываю через пропсы
   return (
     <BrowserRouter>
-      <Header />
+      <Header isLoggedIn={!!user} />
       <Routes>
         <Route
           path="/"
