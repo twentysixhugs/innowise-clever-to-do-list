@@ -13,6 +13,6 @@ export const StyledTextField = styled(TextField)({
 });
 
 export const StyledSubmitButton = styled(Button)({
-  marginTop: 3,
+  marginTop: "2rem",
   alignSelf: "flex-start",
 });
