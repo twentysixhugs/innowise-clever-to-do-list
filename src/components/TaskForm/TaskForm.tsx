@@ -1,6 +1,6 @@
 import { TextField, Typography, Button } from "@mui/material";
 import { Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { ITaskInput } from "../../interfaces/taskinput.interface";
@@ -8,6 +8,12 @@ import { ITaskInput } from "../../interfaces/taskinput.interface";
 import { useNavigate } from "react-router-dom";
 import { TaskUpdateFormProps } from "./props.type";
 import { StyledContainer } from "./TaskForm.styles";
+import { FormError } from "../../constants";
+import {
+  validateTaskDate,
+  validateTaskDescription,
+  validateTaskName,
+} from "../../helpers/validation";
 
 export const TaskForm = ({
   onSubmit,
@@ -22,56 +28,71 @@ export const TaskForm = ({
     date: initialTaskData.date,
   });
 
-  const errorMessages = {
-    name: "Task name must not be empty",
-    description: "Task description must not be empty",
-    date: "Task date must not be empty",
-  };
-
-  const [errors, setErrors] = useState<
-    [field: keyof typeof input, message: string][]
-  >([]);
-
   const navigate = useNavigate();
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    setErrors((errors) => []);
-    e.preventDefault();
-    const { name, description, date } = input;
-
-    if (name && description && date) {
-      onSubmit(name, description, date);
-    } else {
-      const validationErrors: typeof errors = [];
-
-      for (const el in input) {
-        if (!input[el as keyof typeof input]) {
-          validationErrors.push([
-            el as keyof typeof input,
-            errorMessages[el as keyof typeof errorMessages],
-          ]);
-        }
-      }
-
-      setErrors((errors) => [...errors, ...validationErrors]);
-    }
-  };
-
-  useEffect(() => {
-    console.log(input);
-  }, [input]);
+  const [errors, setErrors] = useState<{
+    [K in keyof typeof input]: FormError | "";
+  }>({
+    name: "",
+    description: "",
+    date: "",
+  });
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    const { name, description, date } = input;
+
+    const validationResult: { [K in keyof typeof input]: FormError | "" } = {
+      name: validateTaskName(name),
+      description: validateTaskDescription(description),
+      date: validateTaskDate(date),
+    };
+
+    // Either set to empty strings or FormError members
+    setErrors(validationResult);
+
+    if (Object.values(validationResult).every((error) => error === "")) {
+      onSubmit(name, description, date!);
+    }
+  };
+
   const handleDateChange = (value: Date | null) => {
+    setErrors({ ...errors, date: "" }); // reset error on changed input field
+
     if (!value || !value.getDate()) {
       setInput({ ...input, date: new Date() });
       return;
     }
 
     setInput({ ...input, date: value });
+  };
+
+  const getComponentsFromErrors = () => {
+    const components = [];
+
+    let error: keyof typeof errors;
+
+    for (error in errors) {
+      errors[error] &&
+        components.push(
+          <Typography
+            color="error"
+            key={error}
+            component="span"
+            variant="subtitle1"
+          >
+            {"\u2022 "}
+            {errors[error]}
+          </Typography>
+        );
+    }
+
+    return components;
   };
 
   return (
@@ -86,17 +107,7 @@ export const TaskForm = ({
         <Typography component="h1" variant="h2" marginBottom={2}>
           {title}
         </Typography>
-        {errors.map((err) => (
-          <Typography
-            color="error"
-            key={err[0]}
-            component="span"
-            variant="subtitle1"
-          >
-            {"\u2022 "}
-            {err[1]}
-          </Typography>
-        ))}
+        {getComponentsFromErrors()}
         <Stack spacing={2} marginTop="1rem">
           <TextField
             label="Task name"
@@ -124,7 +135,6 @@ export const TaskForm = ({
             disableMaskedInput={true}
           />
         </Stack>
-
         <Stack spacing={2} marginTop={3} direction="row">
           <Button variant="contained" type="submit">
             {submitButtonText}

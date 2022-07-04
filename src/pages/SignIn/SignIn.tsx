@@ -1,6 +1,8 @@
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
 import { useState } from "react";
+import { FormError } from "../../constants";
+import { validatePassword, validateUsername } from "../../helpers/validation";
 import { StyledContainer, StyledSubmitButton } from "./SignIn.styles";
 import { StyledTextField } from "./SignIn.styles";
 
@@ -10,17 +12,15 @@ export const SignIn = () => {
     password: "",
   });
 
-  const errorMessages = {
-    username: "Username must not be empty",
-    password: "Password must not be empty",
-  };
-
-  const [errors, setErrors] = useState<
-    [field: keyof typeof input, message: string][]
-  >([]);
+  const [errors, setErrors] = useState<{
+    [K in keyof typeof input]: FormError | "";
+  }>({
+    username: "",
+    password: "",
+  });
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setErrors([]);
+    setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
@@ -28,55 +28,62 @@ export const SignIn = () => {
     e.preventDefault();
     const { username, password } = input;
 
-    if (username && password) {
+    const validationResult: { [K in keyof typeof input]: FormError | "" } = {
+      username: validateUsername(username),
+      password: validatePassword(password),
+    };
+
+    // Either set to empty strings or FormError members
+    setErrors(validationResult);
+
+    if (Object.values(validationResult).every((error) => error === "")) {
       // submit
-    } else {
-      for (const el in input) {
-        if (!input[el as keyof typeof input]) {
-          setErrors((prev) => [
-            ...prev,
-            [
-              el as keyof typeof input,
-              errorMessages[el as keyof typeof errorMessages],
-            ],
-          ]);
-        }
-      }
     }
+  };
+
+  const getComponentsFromErrors = () => {
+    const components = [];
+
+    let error: keyof typeof errors;
+
+    for (error in errors) {
+      errors[error] &&
+        components.push(
+          <Typography
+            color="error"
+            key={error}
+            component="span"
+            variant="subtitle1"
+          >
+            {"\u2022 "}
+            {errors[error]}
+          </Typography>
+        );
+    }
+
+    return components;
   };
 
   return (
     <StyledContainer>
       <Stack
         component="form"
+        noValidate
         justifyContent="center"
         paddingTop={15}
         onSubmit={handleSubmit}
-        noValidate
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
-          Sign in
+          Sign up
         </Typography>
-        {errors.map((err) => (
-          <Typography
-            color="error"
-            key={err[0]}
-            component="span"
-            variant="subtitle1"
-          >
-            {"\u2022 "}
-            {err[1]}
-          </Typography>
-        ))}
-
+        {getComponentsFromErrors()}
         <StyledTextField
           label="Username"
           variant="outlined"
           required
-          type="text"
           name="username"
-          onChange={handleChange}
           value={input.username}
+          onChange={handleChange}
         />
         <StyledTextField
           label="Password"
@@ -84,11 +91,11 @@ export const SignIn = () => {
           required
           type="password"
           name="password"
-          onChange={handleChange}
           value={input.password}
+          onChange={handleChange}
         />
         <StyledSubmitButton variant="contained" type="submit">
-          Sign in
+          Sign up
         </StyledSubmitButton>
       </Stack>
     </StyledContainer>

@@ -1,6 +1,12 @@
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
 import { useState } from "react";
+import { FormError } from "../../constants";
+import {
+  validatePassword,
+  validatePasswordConfirm,
+  validateUsername,
+} from "../../helpers/validation";
 import { StyledContainer, StyledSubmitButton } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
 
@@ -11,18 +17,16 @@ export const SignUp = () => {
     passwordConfirm: "",
   });
 
-  const errorMessages = {
-    username: "Username must not be empty",
-    password: "Password must not be empty",
-    passwordConfirm: "Passwords do not match",
-  };
-
-  const [errors, setErrors] = useState<
-    [field: keyof typeof input, message: string][]
-  >([]);
+  const [errors, setErrors] = useState<{
+    [K in keyof typeof input]: FormError | "";
+  }>({
+    username: "",
+    password: "",
+    passwordConfirm: "",
+  });
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setErrors([]);
+    setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
@@ -30,32 +34,41 @@ export const SignUp = () => {
     e.preventDefault();
     const { username, password, passwordConfirm } = input;
 
-    if (username && password && passwordConfirm) {
+    const validationResult: { [K in keyof typeof input]: FormError | "" } = {
+      username: validateUsername(username),
+      password: validatePassword(password),
+      passwordConfirm: validatePasswordConfirm(password, passwordConfirm),
+    };
+
+    // Either set to empty strings or FormError members
+    setErrors(validationResult);
+
+    if (Object.values(validationResult).every((error) => error === "")) {
       // submit
-    } else {
-      const validationErrors: typeof errors = [];
-
-      for (const el in input) {
-        if (!input[el as keyof typeof input]) {
-          validationErrors.push([
-            el as keyof typeof input,
-            errorMessages[el as keyof typeof errorMessages],
-          ]);
-        }
-      }
-
-      if (
-        password !== passwordConfirm &&
-        !validationErrors.find((err) => err[0] === "passwordConfirm")
-      ) {
-        validationErrors.push([
-          "passwordConfirm",
-          errorMessages.passwordConfirm,
-        ]);
-      }
-
-      setErrors([...errors, ...validationErrors]);
     }
+  };
+
+  const getComponentsFromErrors = () => {
+    const components = [];
+
+    let error: keyof typeof errors;
+
+    for (error in errors) {
+      errors[error] &&
+        components.push(
+          <Typography
+            color="error"
+            key={error}
+            component="span"
+            variant="subtitle1"
+          >
+            {"\u2022 "}
+            {errors[error]}
+          </Typography>
+        );
+    }
+
+    return components;
   };
 
   return (
@@ -70,17 +83,7 @@ export const SignUp = () => {
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign up
         </Typography>
-        {errors.map((err) => (
-          <Typography
-            color="error"
-            key={err[0]}
-            component="span"
-            variant="subtitle1"
-          >
-            {"\u2022 "}
-            {err[1]}
-          </Typography>
-        ))}
+        {getComponentsFromErrors()}
         <StyledTextField
           label="Username"
           variant="outlined"
