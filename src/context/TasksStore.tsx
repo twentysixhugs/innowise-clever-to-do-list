@@ -40,7 +40,7 @@ export class TasksStore extends React.Component<
   TasksStoreProps,
   TasksStoreState
 > {
-  state = {
+  state: TasksStoreState = {
     tasks: [
       {
         name: "Lorem ipsum dolor sit amet 1",
