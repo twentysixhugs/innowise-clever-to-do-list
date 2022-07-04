@@ -35,6 +35,19 @@ export function validateUsername(username: string): "" | FormError {
   return "";
 }
 
+export function validateEmail(email: string): "" | FormError {
+  if (!email) {
+    return FormError.EmptyEmail;
+  }
+
+  //eslint-disable-next-line
+  if (!email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+    return FormError.AllowedEmailCharacters;
+  }
+
+  return "";
+}
+
 export function validateTaskName(taskName: string): "" | FormError {
   if (!taskName) {
     return FormError.EmptyTaskName;

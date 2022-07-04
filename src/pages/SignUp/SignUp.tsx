@@ -1,9 +1,16 @@
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
 import { Button } from "@mui/material";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  AuthError,
+} from "firebase/auth";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FormError } from "../../constants";
 import {
+  validateEmail,
   validatePassword,
   validatePasswordConfirm,
   validateUsername,
@@ -13,6 +20,7 @@ import { StyledTextField } from "./SignUp.styles";
 
 const SignUp = () => {
   const [input, setInput] = useState({
+    email: "",
     username: "",
     password: "",
     passwordConfirm: "",
@@ -21,10 +29,15 @@ const SignUp = () => {
   const [errors, setErrors] = useState<{
     [K in keyof typeof input]: FormError | "";
   }>({
+    email: "",
     username: "",
     password: "",
     passwordConfirm: "",
   });
+
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
@@ -33,9 +46,10 @@ const SignUp = () => {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const { username, password, passwordConfirm } = input;
+    const { username, email, password, passwordConfirm } = input;
 
     const validationResult: { [K in keyof typeof input]: FormError | "" } = {
+      email: validateEmail(email),
       username: validateUsername(username),
       password: validatePassword(password),
       passwordConfirm: validatePasswordConfirm(password, passwordConfirm),
@@ -45,7 +59,15 @@ const SignUp = () => {
     setErrors(validationResult);
 
     if (Object.values(validationResult).every((error) => error === "")) {
-      // submit
+      const auth = getAuth();
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          navigate("/");
+        })
+        .catch((err: AuthError) => {
+          setServerError(err.message);
+        });
     }
   };
 
@@ -67,6 +89,20 @@ const SignUp = () => {
             {errors[error]}
           </Typography>
         );
+    }
+
+    if (serverError) {
+      components.push(
+        <Typography
+          key={serverError}
+          color="error"
+          component="span"
+          variant="subtitle1"
+        >
+          {"\u2022 "}
+          {serverError}
+        </Typography>
+      );
     }
 
     return components;
@@ -91,6 +127,15 @@ const SignUp = () => {
           required
           name="username"
           value={input.username}
+          onChange={handleChange}
+        />
+        <StyledTextField
+          label="Email"
+          variant="outlined"
+          required
+          name="email"
+          type="email"
+          value={input.email}
           onChange={handleChange}
         />
         <StyledTextField
