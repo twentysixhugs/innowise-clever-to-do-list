@@ -28,45 +28,54 @@ export const useTasks = () => {
   return useContext(TasksContext);
 };
 
-interface ITasksStoreProps {
+type TasksStoreState = {
+  tasks: ITask[];
+};
+
+type TasksStoreProps = {
   children?: React.ReactNode;
-}
+};
 
-export const TasksStore = ({ children }: ITasksStoreProps) => {
-  const [tasks, setTasks] = useState<ITask[]>([
-    {
-      name: "Lorem ipsum dolor sit amet 1",
-      description: "Lorem ipsum dolor sit amet",
-      date: new Date(),
-      isCompleted: true,
-      id: "1",
-    },
-    {
-      name: "Lorem ipsum dolor sit amet 2",
-      description: "Lorem ipsum dolor sit amet",
-      date: new Date(),
-      isCompleted: false,
-      id: "2",
-    },
-    {
-      name: "Lorem ipsum dolor sit amet 3",
-      description: "",
-      date: new Date(),
-      isCompleted: true,
-      id: "3",
-    },
-    {
-      name: "Lorem ipsum dolor sit amet 4",
-      description: "Lorem ipsum dolor sit amet",
-      date: new Date(),
-      isCompleted: false,
-      id: "4",
-    },
-  ]);
+export class TasksStore extends React.Component<
+  TasksStoreProps,
+  TasksStoreState
+> {
+  state = {
+    tasks: [
+      {
+        name: "Lorem ipsum dolor sit amet 1",
+        description: "Lorem ipsum dolor sit amet",
+        date: new Date(),
+        isCompleted: true,
+        id: "1",
+      },
+      {
+        name: "Lorem ipsum dolor sit amet 2",
+        description: "Lorem ipsum dolor sit amet",
+        date: new Date(),
+        isCompleted: false,
+        id: "2",
+      },
+      {
+        name: "Lorem ipsum dolor sit amet 3",
+        description: "",
+        date: new Date(),
+        isCompleted: true,
+        id: "3",
+      },
+      {
+        name: "Lorem ipsum dolor sit amet 4",
+        description: "Lorem ipsum dolor sit amet",
+        date: new Date(),
+        isCompleted: false,
+        id: "4",
+      },
+    ],
+  };
 
-  const handleToggleTaskCompletion = useCallback((id: string) => {
-    setTasks((tasks) =>
-      tasks.map((task) => {
+  handleToggleTaskCompletion = (id: string) => {
+    this.setState(({ tasks }) => {
+      const newTasks = tasks.map((task) => {
         if (task.id === id) {
           return {
             ...task,
@@ -75,61 +84,81 @@ export const TasksStore = ({ children }: ITasksStoreProps) => {
         }
 
         return task;
-      })
+      });
+
+      return { tasks: newTasks };
+    });
+  };
+
+  handleCreateTask = (
+    name: string,
+    description: string,
+    date: Date,
+    id: string
+  ) => {
+    this.setState(({ tasks }) => {
+      return {
+        tasks: [
+          ...tasks,
+          {
+            name,
+            description,
+            date,
+            id,
+            isCompleted: false,
+          },
+        ],
+      };
+    });
+  };
+
+  handleUpdateTask = (
+    name: string,
+    description: string,
+    date: Date,
+    id: string
+  ) => {
+    this.setState(({ tasks }) => {
+      const newTasks = tasks.map((task) => {
+        if (task.id === id) {
+          return {
+            ...task,
+            name,
+            description,
+            date,
+          };
+        }
+
+        return task;
+      });
+
+      return {
+        tasks: newTasks,
+      };
+    });
+  };
+
+  handleDeleteTask = (id: string) => {
+    this.setState(({ tasks }) => {
+      return {
+        tasks: tasks.filter((task) => task.id !== id),
+      };
+    });
+  };
+
+  render() {
+    return (
+      <TasksContext.Provider
+        value={{
+          tasks: this.state.tasks,
+          toggleTaskCompletion: this.handleToggleTaskCompletion,
+          createTask: this.handleCreateTask,
+          updateTask: this.handleUpdateTask,
+          deleteTask: this.handleDeleteTask,
+        }}
+      >
+        {this.props.children}
+      </TasksContext.Provider>
     );
-  }, []);
-
-  const handleCreateTask = useCallback(
-    (name: string, description: string, date: Date, id: string) => {
-      setTasks((tasks) => [
-        ...tasks,
-        {
-          name,
-          description,
-          date,
-          id,
-          isCompleted: false,
-        },
-      ]);
-    },
-    []
-  );
-
-  const handleUpdateTask = useCallback(
-    (name: string, description: string, date: Date, id: string) => {
-      setTasks((tasks) =>
-        tasks.map((task) => {
-          if (task.id === id) {
-            return {
-              ...task,
-              name,
-              description,
-              date,
-            };
-          }
-
-          return task;
-        })
-      );
-    },
-    []
-  );
-
-  const handleDeleteTask = useCallback((id: string) => {
-    setTasks((tasks) => tasks.filter((task) => task.id !== id));
-  }, []);
-
-  return (
-    <TasksContext.Provider
-      value={{
-        tasks,
-        toggleTaskCompletion: handleToggleTaskCompletion,
-        createTask: handleCreateTask,
-        updateTask: handleUpdateTask,
-        deleteTask: handleDeleteTask,
-      }}
-    >
-      {children}
-    </TasksContext.Provider>
-  );
-};
+  }
+}
