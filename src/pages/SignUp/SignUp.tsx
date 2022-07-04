@@ -15,6 +15,7 @@ import {
   validatePasswordConfirm,
   validateUsername,
 } from "../../helpers/validation";
+import { UsernameEmailService } from "../../services/DatabaseService";
 import { StyledContainer } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
 
@@ -58,11 +59,17 @@ const SignUp = () => {
     // Either set to empty strings or FormError members
     setErrors(validationResult);
 
+    // Anyway, reset server error because we make another request
+    setServerError(null);
+
     if (Object.values(validationResult).every((error) => error === "")) {
       const auth = getAuth();
 
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
+          return UsernameEmailService.createOne({ username, email });
+        })
+        .then((userEmailRef) => {
           navigate("/");
         })
         .catch((err: AuthError) => {

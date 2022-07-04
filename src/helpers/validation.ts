@@ -12,6 +12,14 @@ export function validatePassword(password: string): "" | FormError {
   return "";
 }
 
+export function validateNotEmpty(value: string, error: FormError) {
+  if (!value) {
+    return error;
+  }
+
+  return "";
+}
+
 export function validatePasswordConfirm(
   password: string,
   passwordConfirm: string

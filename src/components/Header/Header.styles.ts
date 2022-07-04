@@ -31,14 +31,3 @@ export const StyledLink = styled(Link)({
     textDecoration: "underline",
   },
 }) as OverridableComponent<LinkTypeMap<Record<string, unknown>, "a">>;
-
-export const Signout = styled("button")({
-  fontSize: "1.2rem",
-  textTransform: "none",
-  "&:hover": {
-    textDecoration: "underline",
-  },
-  color: "lightgrey",
-  background: "none",
-  cursor: "pointer",
-});

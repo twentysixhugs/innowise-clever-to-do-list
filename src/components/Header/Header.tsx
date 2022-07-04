@@ -1,12 +1,13 @@
 import { Link as RouterLink } from "react-router-dom";
-import { StyledBox, StyledNav, StyledLink, Signout } from "./Header.styles";
+import { SignOut } from "../SignOut";
+import { StyledBox, StyledNav, StyledLink } from "./Header.styles";
 import { HeaderProps } from "./props.type";
 
 export const Header = ({ isLoggedIn }: HeaderProps) => {
   return (
     <StyledBox component="header">
       {isLoggedIn ? (
-        <Signout>Sign out</Signout>
+        <SignOut />
       ) : (
         <StyledNav>
           <StyledLink component={RouterLink} to="/signup">
