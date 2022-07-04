@@ -1,6 +1,6 @@
 import { styled } from "@mui/system";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { LinkTypeMap } from "@mui/material";
+import { Button, LinkTypeMap } from "@mui/material";
 
 import { Box, Link } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
@@ -31,3 +31,14 @@ export const StyledLink = styled(Link)({
     textDecoration: "underline",
   },
 }) as OverridableComponent<LinkTypeMap<Record<string, unknown>, "a">>;
+
+export const Signout = styled("button")({
+  fontSize: "1.2rem",
+  textTransform: "none",
+  "&:hover": {
+    textDecoration: "underline",
+  },
+  color: "lightgrey",
+  background: "none",
+  cursor: "pointer",
+});
