@@ -5,7 +5,7 @@ import { Container } from "@mui/system";
 import { styled } from "@mui/system";
 
 export const StyledContainer = styled(Container)({
-  minHeight: "calc(100vh - 70px) !important",
+  height: "100%",
 });
 
 export const StyledTextField = styled(TextField)({
