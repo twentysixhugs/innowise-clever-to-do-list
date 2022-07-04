@@ -16,7 +16,7 @@ export const RouteSwitch = () => {
 
   return (
     <BrowserRouter>
-      <Header isLoggedIn={!!user} />
+      <Header isLoggedIn={!!user} isLoading={isLoading} />
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route

@@ -10,23 +10,36 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
+  DocumentReference,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { ITask } from "../interfaces/task.interface";
+import {
+  ITask,
+  ITaskDBInput,
+  ITaskDBOutput,
+} from "../interfaces/task.interface";
 import { UsernameEmail } from "../interfaces/usernameEmail.interface";
 
-class DatabaseService<T extends Omit<T, "id">> {
-  private collection;
-  private collectionName;
-  private user;
+abstract class DatabaseService {
+  protected collection;
+  protected collectionName;
 
   constructor(collectionName: string) {
     this.collection = collection(db, collectionName);
     this.collectionName = collectionName;
+  }
+}
+
+class ProtectedDatabaseService<Input, Output> extends DatabaseService {
+  private user;
+
+  constructor(collectionName: string) {
+    super(collectionName);
+
     this.user = getAuth().currentUser;
   }
 
-  getAllForUser = async (): Promise<T[]> => {
+  getAllForUser = async (): Promise<Output[]> => {
     if (!this.user) {
       throw new Error("Authentication required");
     }
@@ -39,11 +52,11 @@ class DatabaseService<T extends Omit<T, "id">> {
       return {
         ...doc.data(),
         id: doc.id,
-      } as unknown as T & { id: string };
+      } as unknown as Output;
     });
   };
 
-  getOneForUser = async (path: string): Promise<T> => {
+  getOneForUserByPath = async (path: string): Promise<Output> => {
     if (!this.user) {
       throw new Error("Authentication required");
     }
@@ -55,21 +68,38 @@ class DatabaseService<T extends Omit<T, "id">> {
       return {
         ...snapshot.data(),
         id: snapshot.id,
-      } as unknown as T & { id: string };
+      } as unknown as Output;
     } else {
       throw new Error("Document not found");
     }
   };
 
-  createOneForUser = async (data: T) => {
+  getOneForUserByRef = async (ref: DocumentReference<DocumentData>) => {
     if (!this.user) {
       throw new Error("Authentication required");
     }
 
-    return await addDoc(this.collection, data);
+    const snapshot = await getDoc(ref);
+
+    if (snapshot.exists()) {
+      return {
+        ...snapshot.data(),
+        id: snapshot.id,
+      } as unknown as Output;
+    } else {
+      throw new Error("Document not found");
+    }
   };
 
-  updateOneForUser = async (path: string, data: T) => {
+  createOneForUser = async (data: Input) => {
+    if (!this.user) {
+      throw new Error("Authentication required");
+    }
+
+    return await addDoc(this.collection, { ...data, uid: this.user.uid });
+  };
+
+  updateOneForUser = async (path: string, data: Input) => {
     if (!this.user) {
       throw new Error("Authentication required");
     }
@@ -88,13 +118,23 @@ class DatabaseService<T extends Omit<T, "id">> {
 
     return await deleteDoc(docRef);
   };
+}
+
+class PublicDatabaseService<T> extends DatabaseService {
+  constructor(collectionName: string) {
+    super(collectionName);
+  }
 
   createOne = async (data: T) => {
     return await addDoc(this.collection, data);
   };
 }
 
-export const TaskService = new DatabaseService<ITask>("tasks");
-export const UsernameEmailService = new DatabaseService<UsernameEmail>(
+export const TaskService = new ProtectedDatabaseService<
+  ITaskDBInput,
+  ITaskDBOutput
+>("tasks");
+
+export const UsernameEmailService = new PublicDatabaseService<UsernameEmail>(
   "usernamesForEmails"
 );

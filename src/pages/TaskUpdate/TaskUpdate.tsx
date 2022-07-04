@@ -1,7 +1,9 @@
 import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Timestamp } from "firebase/firestore";
 import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore";
+import { TaskService } from "../../services/DatabaseService";
 
 const TaskUpdate = () => {
   const { tasks, updateTask } = useTasks();
@@ -15,10 +17,28 @@ const TaskUpdate = () => {
     (name: string, description: string, date: Date) => {
       if (!taskToUpdate) return;
 
-      updateTask(name, description, date, id!);
-      navigate("/");
+      const { id } = taskToUpdate;
+
+      TaskService.updateOneForUser(id, {
+        name,
+        description,
+        timestamp: Timestamp.fromDate(date),
+        isCompleted: false,
+      })
+        .then(() => {
+          return TaskService.getOneForUserByPath(id);
+        })
+        .then((data) => {
+          const { name, description, timestamp, id } = data;
+
+          updateTask(name, description, timestamp.toDate(), id);
+          navigate("/");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    [updateTask, id, navigate, taskToUpdate]
+    [updateTask, navigate, taskToUpdate]
   );
 
   return (
