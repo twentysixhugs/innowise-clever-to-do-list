@@ -3,7 +3,11 @@ import { SignOut } from "../SignOut";
 import { StyledBox, StyledNav, StyledLink } from "./Header.styles";
 import { HeaderProps } from "./props.type";
 
-export const Header = ({ isLoggedIn }: HeaderProps) => {
+export const Header = ({ isLoggedIn, isLoading }: HeaderProps) => {
+  if (isLoading) {
+    return <StyledBox component="header" />;
+  }
+
   return (
     <StyledBox component="header">
       {isLoggedIn ? (
