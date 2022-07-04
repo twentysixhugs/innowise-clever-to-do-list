@@ -1,6 +1,4 @@
 import {
-  Card,
-  CardActions,
   Typography,
   IconButton,
   IconButtonProps,
@@ -18,40 +16,30 @@ import {
 } from "@mui/icons-material";
 import styled from "@emotion/styled";
 import { useState } from "react";
-
-interface ITaskEntryProps {
-  name: string;
-  description: string;
-  isCompleted: boolean;
-  onIsCompletedChange: React.ChangeEventHandler<HTMLInputElement>;
-  onEdit: React.MouseEventHandler<HTMLButtonElement>;
-  onDelete: React.MouseEventHandler<HTMLButtonElement>;
-}
+import { useNavigate } from "react-router-dom";
+import { useTasks } from "../../context/TasksStore";
+import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
+import { TaskEntryProps } from "./props.type";
 
 export const TaskEntry = ({
+  id,
   name,
   description,
   isCompleted,
-  onIsCompletedChange,
-  onEdit,
-  onDelete,
-}: ITaskEntryProps) => {
+}: TaskEntryProps) => {
   const [expanded, setExpanded] = useState(false);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
+
+  const navigate = useNavigate();
+  const { toggleTaskCompletion, deleteTask } = useTasks();
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
+  /* UI interaction */
   const handleDeleteClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     setConfirmDeletion(!confirmDeletion);
-  };
-
-  const handleDeleteConfirm: React.MouseEventHandler<HTMLButtonElement> = (
-    e
-  ) => {
-    setConfirmDeletion(false);
-    onDelete(e);
   };
 
   const handleDeleteCancel: React.MouseEventHandler<HTMLButtonElement> = (
@@ -60,11 +48,34 @@ export const TaskEntry = ({
     setConfirmDeletion(false);
   };
 
+  const handleDeleteConfirm: React.MouseEventHandler<HTMLButtonElement> = (
+    e
+  ) => {
+    setConfirmDeletion(false);
+    deleteTask(id);
+    // сделать отсюда запрос
+    // в then обновить контекст
+  };
+
+  /* Completion */
+  const handleIsCompleteToggle: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
+    // сделать отсюда запрос
+    // в then обновить контекст
+    toggleTaskCompletion(id);
+  };
+
+  /* Redirects on click */
+  const handleEdit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    navigate(`/edit/${id}`);
+  };
+
   return (
-    <Card sx={{ padding: "1rem" }}>
+    <StyledPaper elevation={5}>
       <Stack direction="row" alignItems="center">
         <Checkbox
-          onChange={onIsCompletedChange}
+          onChange={handleIsCompleteToggle}
           checked={isCompleted}
           icon={<CircleOutlined />}
           checkedIcon={<CheckCircle />}
@@ -74,7 +85,7 @@ export const TaskEntry = ({
         </Typography>
       </Stack>
 
-      <CardActions sx={{ padding: 0 }}>
+      <StyledCardActions>
         {description && (
           <ExpandMore
             expand={expanded}
@@ -85,13 +96,13 @@ export const TaskEntry = ({
             <ExpandMoreIcon />
           </ExpandMore>
         )}
-        <IconButton onClick={onEdit}>
+        <IconButton onClick={handleEdit}>
           <EditOutlined color="action" />
         </IconButton>
         <IconButton onClick={handleDeleteClick}>
           <DeleteOutlined color="action" />
         </IconButton>
-      </CardActions>
+      </StyledCardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <Typography component="p" variant="subtitle1" marginTop={1}>
           {description}
@@ -119,7 +130,7 @@ export const TaskEntry = ({
           </Button>
         </Stack>
       </Collapse>
-    </Card>
+    </StyledPaper>
   );
 };
 

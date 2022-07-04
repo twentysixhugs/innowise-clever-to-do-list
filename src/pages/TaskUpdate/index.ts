@@ -1,1 +1,1 @@
-export { TaskUpdate } from "./TaskUpdate";
+export { default } from "./TaskUpdate";
