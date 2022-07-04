@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
+import { Button } from "@mui/material";
 import { useState } from "react";
 import { FormError } from "../../constants";
 import {
@@ -7,7 +8,7 @@ import {
   validatePasswordConfirm,
   validateUsername,
 } from "../../helpers/validation";
-import { StyledContainer, StyledSubmitButton } from "./SignUp.styles";
+import { StyledContainer } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
 
 const SignUp = () => {
@@ -110,9 +111,15 @@ const SignUp = () => {
           value={input.passwordConfirm}
           onChange={handleChange}
         />
-        <StyledSubmitButton variant="contained" type="submit">
-          Sign up
-        </StyledSubmitButton>
+
+        <Stack spacing={2} marginTop={4} direction="row">
+          <Button variant="contained" type="submit">
+            Sign up
+          </Button>
+          <Button variant="contained" color="warning">
+            Sign up with Google
+          </Button>
+        </Stack>
       </Stack>
     </StyledContainer>
   );
