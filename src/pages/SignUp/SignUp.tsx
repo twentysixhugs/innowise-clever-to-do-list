@@ -7,7 +7,6 @@ import {
   AuthError,
 } from "firebase/auth";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
 import {
@@ -41,8 +40,6 @@ const SignUp = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
-
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -73,9 +70,6 @@ const SignUp = () => {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           return UsernameEmailService.createOne({ username, email });
-        })
-        .then((userEmailRef) => {
-          navigate("/");
         })
         .catch((err: AuthError) => {
           setServerError(err.message);
@@ -139,7 +133,7 @@ const SignUp = () => {
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign up
         </Typography>
-        {getComponentsFromErrors()}
+        {/* {getComponentsFromErrors()} */}
         <StyledTextField
           label="Username"
           variant="outlined"
@@ -147,6 +141,8 @@ const SignUp = () => {
           name="username"
           value={input.username}
           onChange={handleChange}
+          error={!!errors.username}
+          helperText={errors.username}
         />
         <StyledTextField
           label="Email"

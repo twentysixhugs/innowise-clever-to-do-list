@@ -3,7 +3,6 @@ import { Stack } from "@mui/material";
 import { Button } from "@mui/material";
 import { AuthError, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
 import {
@@ -32,8 +31,6 @@ const SignIn = () => {
 
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const navigate = useNavigate();
-
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -60,9 +57,6 @@ const SignIn = () => {
       setIsLoading(true);
 
       signInWithEmailAndPassword(auth, email, password)
-        .then((userCredentials) => {
-          navigate("/");
-        })
         .catch((err: AuthError) => {
           setServerError(err.message);
         })
