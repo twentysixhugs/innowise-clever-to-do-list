@@ -13,6 +13,7 @@ import {
   DocumentReference,
   Timestamp,
 } from "firebase/firestore";
+import { UpdateData } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import {
   ITask,
@@ -129,12 +130,16 @@ class ProtectedDatabaseService<Input, Output> extends DatabaseService {
     return await addDoc(this.collection, { ...data, uid: this.user.uid });
   };
 
-  updateOneForUser = async (path: string, data: Input) => {
+  updateOneForUser = async (path: string, data: UpdateData<Input>) => {
     if (!this.user) {
       throw new Error("Authentication required");
     }
 
-    const docRef = doc(db, this.collectionName, path);
+    const docRef = doc(
+      db,
+      this.collectionName,
+      path
+    ) as DocumentReference<Input>;
 
     return await updateDoc(docRef, data);
   };
