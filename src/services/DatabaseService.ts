@@ -11,6 +11,7 @@ import {
   updateDoc,
   deleteDoc,
   DocumentReference,
+  Timestamp,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import {
@@ -45,6 +46,35 @@ class ProtectedDatabaseService<Input, Output> extends DatabaseService {
     }
 
     const q = query(this.collection, where("uid", "==", this.user.uid));
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((doc) => {
+      return {
+        ...doc.data(),
+        id: doc.id,
+      } as unknown as Output;
+    });
+  };
+
+  getAllByDayForUser = async (date: Date): Promise<Output[]> => {
+    if (!this.user) {
+      throw new Error("Authentication required");
+    }
+
+    // No matter what time the timestamp has,
+    // this method will query everything that matches its day
+
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+
+    const q = query(
+      this.collection,
+      where("uid", "==", this.user.uid),
+      where("timestamp", ">=", new Date(year, month, day)),
+      where("timestamp", "<", new Date(year, month, day + 1))
+    );
 
     const snapshot = await getDocs(q);
 
