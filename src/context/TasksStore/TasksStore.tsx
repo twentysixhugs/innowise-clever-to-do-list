@@ -96,6 +96,32 @@ export class TasksStore extends React.Component<
     });
   };
 
+  handleAppendTasks = (newTasks: ITask[]) => {
+    this.setState(({ tasks }) => {
+      return {
+        tasks: [...tasks, ...newTasks],
+      };
+    });
+  };
+
+  handleGetTasksByDate = (year: number, month: number, day: number) => {
+    return this.state.tasks.filter(({ date }) => {
+      const taskYear = date.getFullYear();
+      const taskMonth = date.getMonth();
+      const taskDay = date.getDate();
+
+      if (taskYear === year && taskMonth === month && taskDay == day) {
+        return true;
+      }
+
+      return false;
+    });
+  };
+
+  resetTasks = () => {
+    this.setState(({ tasks }) => ({ tasks: [] }));
+  };
+
   render() {
     return (
       <TasksContext.Provider
@@ -105,6 +131,9 @@ export class TasksStore extends React.Component<
           createTask: this.handleCreateTask,
           updateTask: this.handleUpdateTask,
           deleteTask: this.handleDeleteTask,
+          appendTasks: this.handleAppendTasks,
+          getTasksByDate: this.handleGetTasksByDate,
+          resetTasks: this.resetTasks,
         }}
       >
         {this.props.children}

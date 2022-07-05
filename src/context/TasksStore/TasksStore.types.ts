@@ -11,6 +11,8 @@ export type TasksStoreProps = {
 export interface ITasksContext {
   tasks: ITask[];
   toggleTaskCompletion: (id: string) => void;
+  appendTasks: (newTasks: ITask[]) => void;
+  getTasksByDate: (year: number, month: number, day: number) => ITask[];
   createTask: (
     name: string,
     description: string,
@@ -24,4 +26,5 @@ export interface ITasksContext {
     id: string
   ) => void;
   deleteTask: (id: string) => void;
+  resetTasks: () => void;
 }
