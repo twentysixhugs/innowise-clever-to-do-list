@@ -1,7 +1,13 @@
+import { Calendar } from "../../components/Calendar";
 import { TasksList } from "../../components/TasksList";
 
 const Overview = () => {
-  return <TasksList />;
+  return (
+    <>
+      <Calendar />
+      <TasksList />
+    </>
+  );
 };
 
 export default Overview;

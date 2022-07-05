@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
 import { TaskForm } from "../../components/TaskForm";
-import { useTasks } from "../../context/TasksStore";
+import { useTasks } from "../../context/TasksStore/TasksStore";
 import { TaskService } from "../../services/DatabaseService";
 
 const TaskUpdate = () => {

@@ -3,7 +3,7 @@ import { Stack, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { TaskEntry } from "../TaskEntry/TaskEntry";
-import { useTasks } from "../../context/TasksStore";
+import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledContainer, StyledIconButton } from "./TasksList.styles";
 
 export const TasksList = () => {

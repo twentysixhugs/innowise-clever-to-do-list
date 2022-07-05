@@ -1,23 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { ITask } from "../interfaces/task.interface";
-
-export interface ITasksContext {
-  tasks: ITask[];
-  toggleTaskCompletion: (id: string) => void;
-  createTask: (
-    name: string,
-    description: string,
-    date: Date,
-    id: string
-  ) => void;
-  updateTask: (
-    name: string,
-    description: string,
-    date: Date,
-    id: string
-  ) => void;
-  deleteTask: (id: string) => void;
-}
+import { ITask } from "../../interfaces/task.interface";
+import {
+  TasksStoreState,
+  TasksStoreProps,
+  ITasksContext,
+} from "./TasksStore.types";
 
 const TasksContext = React.createContext({} as ITasksContext);
 
@@ -26,14 +13,6 @@ const TasksContext = React.createContext({} as ITasksContext);
 
 export const useTasks = () => {
   return useContext(TasksContext);
-};
-
-type TasksStoreState = {
-  tasks: ITask[];
-};
-
-type TasksStoreProps = {
-  children?: React.ReactNode;
 };
 
 export class TasksStore extends React.Component<
