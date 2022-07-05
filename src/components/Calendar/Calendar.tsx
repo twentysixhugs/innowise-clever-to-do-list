@@ -10,12 +10,13 @@ import {
 import { CalendarDay } from "../CalendarDay";
 import { DayOfWeek } from "../../constants";
 import { Days } from "./Calendar.types";
-import { useSelectedDay } from "../../context/SelectedDayStore/SelectedDayStore";
+import { CalendarProps } from "./props.type";
 
-export const Calendar = () => {
+export const Calendar = ({
+  selectedDay,
+  onSelectedDayChange,
+}: CalendarProps) => {
   const [days, setDays] = useState<Days>([]);
-
-  const { selectedDay, setSelectedDay } = useSelectedDay();
 
   useEffect(() => {
     const currentDay = getCurrentDayNumber();
@@ -59,16 +60,12 @@ export const Calendar = () => {
     return createdDays;
   };
 
-  const handleClickOnDay = (dayNumber: number) => {
-    setSelectedDay(dayNumber);
-  };
-
   return (
     <Stack spacing={3} direction="row" sx={{ overflow: "scroll" }}>
       {days.map(({ isSelected, day, dayOfWeek }) => (
         <CalendarDay
           key={day}
-          onClick={(e) => handleClickOnDay(day)}
+          onClick={(e) => onSelectedDayChange(day)}
           dayOfMonth={day}
           dayOfWeek={dayOfWeek}
           hasCompletedTasks={true}
