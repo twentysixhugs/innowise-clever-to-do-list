@@ -10,18 +10,23 @@ import {
   updateDoc,
   deleteDoc,
   DocumentReference,
+  onSnapshot,
 } from "firebase/firestore";
 import { UpdateData } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { DatabaseService } from "./DatabaseService";
 
 export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
-  private user;
+  private user: User | null = null;
 
   constructor(collectionName: string) {
     super(collectionName);
 
-    this.user = getAuth().currentUser;
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, (user) => {
+      this.user = user;
+    });
   }
 
   getAllForUser = async (): Promise<Output[]> => {
