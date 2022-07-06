@@ -10,7 +10,6 @@ import {
   updateDoc,
   deleteDoc,
   DocumentReference,
-  onSnapshot,
 } from "firebase/firestore";
 import { UpdateData } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
