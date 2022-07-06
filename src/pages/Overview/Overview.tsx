@@ -4,7 +4,7 @@ import { Calendar } from "../../components/Calendar";
 import { Loader } from "../../components/Loader";
 import { TasksList } from "../../components/TasksList";
 import { useTasks } from "../../context/TasksStore/TasksStore";
-import { TaskService } from "../../services/DatabaseService";
+import { TaskService } from "../../services/TaskService";
 
 const Overview = () => {
   const { appendTasks, resetTasks } = useTasks();

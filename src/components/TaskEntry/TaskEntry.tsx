@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
 import { TaskEntryProps } from "./props.type";
-import { TaskService } from "../../services/DatabaseService";
+import { TaskService } from "../../services/TaskService";
 
 export const TaskEntry = ({
   id,

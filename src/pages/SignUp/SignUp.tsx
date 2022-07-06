@@ -12,7 +12,7 @@ import { FormError } from "../../constants";
 import { validateEmail } from "../../validation/validateEmail";
 import { validateUsername } from "../../validation/validateUsername";
 import { validatePasswordConfirm } from "../../validation/validatePasswordConfirm";
-import { UsernameEmailService } from "../../services/DatabaseService";
+import { UsernameEmailService } from "../../services/UsernameEmailService";
 import { validatePassword } from "../../validation/validatePassword";
 import { StyledContainer } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
