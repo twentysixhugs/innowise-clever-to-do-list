@@ -37,7 +37,7 @@ const SignIn = () => {
     const { email, password } = input;
 
     const validationResult: { [K in keyof typeof input]: FormError | "" } = {
-      email: validateEmail(email),
+      email: validateNotEmpty(email, FormError.EmptyEmail),
       password: validateNotEmpty(password, FormError.EmptyPassword),
     };
 
