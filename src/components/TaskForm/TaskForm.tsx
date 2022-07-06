@@ -9,11 +9,9 @@ import { useNavigate } from "react-router-dom";
 import { TaskUpdateFormProps } from "./props.type";
 import { StyledContainer } from "./TaskForm.styles";
 import { FormError } from "../../constants";
-import {
-  validateTaskDate,
-  validateTaskDescription,
-  validateTaskName,
-} from "../../helpers/validation";
+import { validateTaskDate } from "../../validation/validateTaskDate";
+import { validateTaskDescription } from "../../validation/validateTaskDescription";
+import { validateTaskName } from "../../validation/validateTaskName";
 
 export const TaskForm = ({
   onSubmit,

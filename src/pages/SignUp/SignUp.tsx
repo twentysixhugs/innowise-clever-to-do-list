@@ -9,13 +9,11 @@ import {
 import { useState } from "react";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
-import {
-  validateEmail,
-  validatePassword,
-  validatePasswordConfirm,
-  validateUsername,
-} from "../../helpers/validation";
+import { validateEmail } from "../../validation/validateEmail";
+import { validateUsername } from "../../validation/validateUsername";
+import { validatePasswordConfirm } from "../../validation/validatePasswordConfirm";
 import { UsernameEmailService } from "../../services/DatabaseService";
+import { validatePassword } from "../../validation/validatePassword";
 import { StyledContainer } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
 

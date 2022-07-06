@@ -5,11 +5,9 @@ import { AuthError, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
-import {
-  validateEmail,
-  validateNotEmpty,
-  validatePassword,
-} from "../../helpers/validation";
+import { validateEmail } from "../../validation/validateEmail";
+import { validateNotEmpty } from "../../validation/validateNotEmpty";
+import { validatePassword } from "../../validation/validatePassword";
 import { UsernameEmailService } from "../../services/DatabaseService";
 import { StyledContainer } from "./SignIn.styles";
 import { StyledTextField } from "./SignIn.styles";
