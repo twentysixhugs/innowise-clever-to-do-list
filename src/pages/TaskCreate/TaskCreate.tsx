@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "../../components/Loader";
 import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { taskService } from "../../services/taskService";
@@ -10,8 +11,12 @@ const TaskCreate = () => {
 
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = useCallback(
     (name: string, description: string, date: Date) => {
+      setIsLoading(true);
+
       taskService
         .createOneForUser({
           name,
@@ -26,6 +31,8 @@ const TaskCreate = () => {
           const { name, description, timestamp, id } = data;
 
           createTask(name, description, timestamp.toDate(), id);
+          setIsLoading(false);
+
           navigate("/");
         })
         .catch((err) => {
@@ -34,6 +41,10 @@ const TaskCreate = () => {
     },
     [navigate, createTask]
   );
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <TaskForm

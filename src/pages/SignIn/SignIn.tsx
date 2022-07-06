@@ -67,23 +67,6 @@ const SignIn = () => {
   const getComponentsFromErrors = () => {
     const components = [];
 
-    let error: keyof typeof errors;
-
-    for (error in errors) {
-      errors[error] &&
-        components.push(
-          <Typography
-            color="error"
-            key={error}
-            component="span"
-            variant="subtitle1"
-          >
-            {"\u2022 "}
-            {errors[error]}
-          </Typography>
-        );
-    }
-
     if (serverError) {
       components.push(
         <Typography
@@ -116,6 +99,7 @@ const SignIn = () => {
           Sign in
         </Typography>
         {getComponentsFromErrors()}
+        {/* Stays here until toasts are added*/}
         <StyledTextField
           label="Email"
           variant="outlined"

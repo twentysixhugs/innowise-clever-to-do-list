@@ -81,23 +81,6 @@ const SignUp = () => {
   const getComponentsFromErrors = () => {
     const components = [];
 
-    let error: keyof typeof errors;
-
-    for (error in errors) {
-      errors[error] &&
-        components.push(
-          <Typography
-            color="error"
-            key={error}
-            component="span"
-            variant="subtitle1"
-          >
-            {"\u2022 "}
-            {errors[error]}
-          </Typography>
-        );
-    }
-
     if (serverError) {
       components.push(
         <Typography
@@ -131,7 +114,8 @@ const SignUp = () => {
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign up
         </Typography>
-        {/* {getComponentsFromErrors()} */}
+        {getComponentsFromErrors()}
+        {/* Stays here until toasts are added*/}
         <StyledTextField
           label="Username"
           variant="outlined"
@@ -150,6 +134,8 @@ const SignUp = () => {
           type="email"
           value={input.email}
           onChange={handleChange}
+          error={!!errors.email}
+          helperText={errors.email}
         />
         <StyledTextField
           label="Password"
@@ -159,6 +145,8 @@ const SignUp = () => {
           name="password"
           value={input.password}
           onChange={handleChange}
+          error={!!errors.password}
+          helperText={errors.password}
         />
         <StyledTextField
           label="Confirm password"
@@ -168,6 +156,8 @@ const SignUp = () => {
           name="passwordConfirm"
           value={input.passwordConfirm}
           onChange={handleChange}
+          error={!!errors.passwordConfirm}
+          helperText={errors.passwordConfirm}
         />
 
         <Stack spacing={2} marginTop={4} direction="row">
