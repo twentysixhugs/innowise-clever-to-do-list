@@ -1,4 +1,4 @@
-import { ITaskDBInput, ITaskDBOutput } from "../interfaces/task.interface";
+import { ITaskDBInput, ITaskDBOutput } from "../interfaces/Task.interface";
 import { ProtectedDatabaseService } from "./templates/ProtectedDatabaseService";
 
 export const taskService = new ProtectedDatabaseService<

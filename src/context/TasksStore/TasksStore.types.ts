@@ -1,4 +1,4 @@
-import { ITask } from "../../interfaces/task.interface";
+import { ITask } from "../../interfaces/Task.interface";
 
 export type TasksStoreState = {
   tasks: ITask[];

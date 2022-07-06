@@ -3,7 +3,7 @@ import { Stack } from "@mui/material";
 import { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import { ITaskInput } from "../../interfaces/taskinput.interface";
+import { ITaskInput } from "../../interfaces/TaskInput.interface";
 
 import { useNavigate } from "react-router-dom";
 import { TaskUpdateFormProps } from "./TaskForm.types";

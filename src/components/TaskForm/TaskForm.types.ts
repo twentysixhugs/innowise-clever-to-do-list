@@ -1,4 +1,4 @@
-import { ITaskInput } from "../../interfaces/taskinput.interface";
+import { ITaskInput } from "../../interfaces/TaskInput.interface";
 
 export type TaskUpdateFormProps = {
   onSubmit: (name: string, description: string, date: Date) => void;

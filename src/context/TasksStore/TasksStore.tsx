@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { ITask } from "../../interfaces/task.interface";
+import { ITask } from "../../interfaces/Task.interface";
 import {
   TasksStoreState,
   TasksStoreProps,
