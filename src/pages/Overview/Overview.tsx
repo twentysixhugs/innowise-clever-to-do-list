@@ -20,13 +20,11 @@ const Overview = () => {
 
   // Dates must be converted with .toString() when used for checking query history!
   const queriedDates = useRef<Date[]>([]);
-  const mounted = useRef<boolean>(false);
+  const wasRequestOnFirstRenderMade = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!mounted.current) {
+    if (!wasRequestOnFirstRenderMade.current) {
       resetTasks();
-
-      mounted.current = true;
 
       // On mount, query tasks for today
       const today = new Date();
@@ -55,7 +53,11 @@ const Overview = () => {
         .finally(() => {
           setIsFirstLoading(false);
         });
-    } else {
+    }
+  }, [appendTasks, resetTasks, selectedDay, selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    if (wasRequestOnFirstRenderMade.current) {
       // On update, check if tasks for this date have already been queried
 
       const wasDateQueried = !!queriedDates.current.find((date) => {
@@ -107,6 +109,8 @@ const Overview = () => {
         .finally(() => {
           setIsLoading(false);
         });
+    } else {
+      wasRequestOnFirstRenderMade.current = true;
     }
   }, [appendTasks, resetTasks, selectedDay, selectedMonth, selectedYear]);
 
