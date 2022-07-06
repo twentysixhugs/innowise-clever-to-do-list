@@ -10,9 +10,7 @@ import { useState } from "react";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
 import { validateEmail } from "../../validation/validateEmail";
-import { validateUsername } from "../../validation/validateUsername";
 import { validatePasswordConfirm } from "../../validation/validatePasswordConfirm";
-import { usernameEmailService } from "../../services/usernameEmailService";
 import { validatePassword } from "../../validation/validatePassword";
 import { StyledContainer } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
@@ -20,7 +18,6 @@ import { StyledTextField } from "./SignUp.styles";
 const SignUp = () => {
   const [input, setInput] = useState({
     email: "",
-    username: "",
     password: "",
     passwordConfirm: "",
   });
@@ -29,7 +26,6 @@ const SignUp = () => {
     [K in keyof typeof input]: FormError | "";
   }>({
     email: "",
-    username: "",
     password: "",
     passwordConfirm: "",
   });
@@ -45,11 +41,10 @@ const SignUp = () => {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const { username, email, password, passwordConfirm } = input;
+    const { email, password, passwordConfirm } = input;
 
     const validationResult: { [K in keyof typeof input]: FormError | "" } = {
       email: validateEmail(email),
-      username: validateUsername(username),
       password: validatePassword(password),
       passwordConfirm: validatePasswordConfirm(password, passwordConfirm),
     };
@@ -66,9 +61,6 @@ const SignUp = () => {
       setIsLoading(true);
 
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          return usernameEmailService.createOne({ username, email });
-        })
         .catch((err: AuthError) => {
           setServerError(err.message);
         })
@@ -116,16 +108,7 @@ const SignUp = () => {
         </Typography>
         {getComponentsFromErrors()}
         {/* Stays here until toasts are added*/}
-        <StyledTextField
-          label="Username"
-          variant="outlined"
-          required
-          name="username"
-          value={input.username}
-          onChange={handleChange}
-          error={!!errors.username}
-          helperText={errors.username}
-        />
+
         <StyledTextField
           label="Email"
           variant="outlined"
