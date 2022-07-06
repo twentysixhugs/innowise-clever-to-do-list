@@ -12,7 +12,7 @@ import { FormError } from "../../constants";
 import { validateEmail } from "../../validation/validateEmail";
 import { validateUsername } from "../../validation/validateUsername";
 import { validatePasswordConfirm } from "../../validation/validatePasswordConfirm";
-import { UsernameEmailService } from "../../services/UsernameEmailService";
+import { usernameEmailService } from "../../services/usernameEmailService";
 import { validatePassword } from "../../validation/validatePassword";
 import { StyledContainer } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
@@ -67,7 +67,7 @@ const SignUp = () => {
 
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          return UsernameEmailService.createOne({ username, email });
+          return usernameEmailService.createOne({ username, email });
         })
         .catch((err: AuthError) => {
           setServerError(err.message);

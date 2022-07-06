@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
 import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore/TasksStore";
-import { TaskService } from "../../services/TaskService";
+import { taskService } from "../../services/taskService";
 
 const TaskUpdate = () => {
   const { tasks, updateTask } = useTasks();
@@ -19,14 +19,15 @@ const TaskUpdate = () => {
 
       const { id } = taskToUpdate;
 
-      TaskService.updateOneForUser(id, {
-        name,
-        description,
-        timestamp: Timestamp.fromDate(date),
-        isCompleted: false,
-      })
+      taskService
+        .updateOneForUser(id, {
+          name,
+          description,
+          timestamp: Timestamp.fromDate(date),
+          isCompleted: false,
+        })
         .then(() => {
-          return TaskService.getOneForUserByPath(id);
+          return taskService.getOneForUserByPath(id);
         })
         .then((data) => {
           const { name, description, timestamp, id } = data;

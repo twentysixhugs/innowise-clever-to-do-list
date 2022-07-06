@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
 import { TaskEntryProps } from "./props.type";
-import { TaskService } from "../../services/TaskService";
+import { taskService } from "../../services/taskService";
 
 export const TaskEntry = ({
   id,
@@ -55,7 +55,7 @@ export const TaskEntry = ({
     setConfirmDeletion(false);
     deleteTask(id);
 
-    TaskService.deleteOneForUser(id).catch((err) => {
+    taskService.deleteOneForUser(id).catch((err) => {
       console.log(err.message);
     });
 
@@ -69,11 +69,11 @@ export const TaskEntry = ({
   ) => {
     toggleTaskCompletion(id);
 
-    TaskService.updateOneForUser(id, { isCompleted: !isCompleted }).catch(
-      (err) => {
+    taskService
+      .updateOneForUser(id, { isCompleted: !isCompleted })
+      .catch((err) => {
         console.log(err.message);
-      }
-    );
+      });
   };
 
   /* Redirects on click */

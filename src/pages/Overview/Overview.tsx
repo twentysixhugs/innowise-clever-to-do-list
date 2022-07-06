@@ -4,7 +4,7 @@ import { Calendar } from "../../components/Calendar";
 import { Loader } from "../../components/Loader";
 import { TasksList } from "../../components/TasksList";
 import { useTasks } from "../../context/TasksStore/TasksStore";
-import { TaskService } from "../../services/TaskService";
+import { taskService } from "../../services/taskService";
 
 const Overview = () => {
   const { appendTasks, resetTasks } = useTasks();
@@ -31,7 +31,8 @@ const Overview = () => {
       // On mount, query tasks for today
       const today = new Date();
 
-      TaskService.getAllByDayForUser(today)
+      taskService
+        .getAllByDayForUser(today)
         .then((tasksData) => {
           // Query is successful, save it to query history
 
@@ -82,7 +83,8 @@ const Overview = () => {
 
       setIsLoading(true);
 
-      TaskService.getAllByDayForUser(dateToFetchFor)
+      taskService
+        .getAllByDayForUser(dateToFetchFor)
         .then((tasksData) => {
           // Query is successful, save it to query history
 

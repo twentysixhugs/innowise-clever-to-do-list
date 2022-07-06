@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore/TasksStore";
-import { TaskService } from "../../services/TaskService";
+import { taskService } from "../../services/taskService";
 
 const TaskCreate = () => {
   const { createTask } = useTasks();
@@ -12,14 +12,15 @@ const TaskCreate = () => {
 
   const handleSubmit = useCallback(
     (name: string, description: string, date: Date) => {
-      TaskService.createOneForUser({
-        name,
-        description,
-        timestamp: Timestamp.fromDate(date),
-        isCompleted: false,
-      })
+      taskService
+        .createOneForUser({
+          name,
+          description,
+          timestamp: Timestamp.fromDate(date),
+          isCompleted: false,
+        })
         .then((docRef) => {
-          return TaskService.getOneForUserByRef(docRef);
+          return taskService.getOneForUserByRef(docRef);
         })
         .then((data) => {
           const { name, description, timestamp, id } = data;

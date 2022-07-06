@@ -8,7 +8,7 @@ import { FormError } from "../../constants";
 import { validateEmail } from "../../validation/validateEmail";
 import { validateNotEmpty } from "../../validation/validateNotEmpty";
 import { validatePassword } from "../../validation/validatePassword";
-import { UsernameEmailService } from "../../services/UsernameEmailService";
+import { usernameEmailService } from "../../services/usernameEmailService";
 import { StyledContainer } from "./SignIn.styles";
 import { StyledTextField } from "./SignIn.styles";
 
