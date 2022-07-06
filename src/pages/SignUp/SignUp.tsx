@@ -5,6 +5,9 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   AuthError,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  signInWithPopup,
 } from "firebase/auth";
 import { useState } from "react";
 import { Loader } from "../../components/Loader";
@@ -39,7 +42,9 @@ const SignUp = () => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmitWithPassword: React.FormEventHandler<HTMLFormElement> = (
+    e
+  ) => {
     e.preventDefault();
     const { email, password, passwordConfirm } = input;
 
@@ -67,6 +72,19 @@ const SignUp = () => {
         .finally(() => {
           setIsLoading(false);
         });
+    }
+  };
+
+  const handleGoogleAuth: React.MouseEventHandler = (e) => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    const isMobileDevice = window.matchMedia("(max-width: 1000px)").matches;
+
+    if (isMobileDevice) {
+      signInWithRedirect(auth, provider);
+    } else {
+      signInWithPopup(auth, provider);
     }
   };
 
@@ -101,7 +119,7 @@ const SignUp = () => {
         noValidate
         justifyContent="center"
         paddingTop={15}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmitWithPassword}
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign up
@@ -147,7 +165,11 @@ const SignUp = () => {
           <Button variant="contained" type="submit">
             Sign up
           </Button>
-          <Button variant="contained" color="warning">
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handleGoogleAuth}
+          >
             Sign up with Google
           </Button>
         </Stack>
