@@ -7,7 +7,7 @@ import { enUS } from "date-fns/locale";
 import { TaskEntry } from "../TaskEntry/TaskEntry";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledContainer, StyledIconButton } from "./TasksList.styles";
-import { TasksListProps } from "./props.type";
+import { TasksListProps } from "./TasksList.types";
 
 export const TasksList = ({
   selectedDay,

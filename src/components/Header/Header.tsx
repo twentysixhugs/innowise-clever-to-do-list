@@ -1,7 +1,7 @@
 import { Link as RouterLink } from "react-router-dom";
 import { SignOut } from "../SignOut";
 import { StyledBox, StyledNav, StyledLink } from "./Header.styles";
-import { HeaderProps } from "./props.type";
+import { HeaderProps } from "./Header.types";
 
 export const Header = ({ isLoggedIn, isLoading }: HeaderProps) => {
   if (isLoading) {

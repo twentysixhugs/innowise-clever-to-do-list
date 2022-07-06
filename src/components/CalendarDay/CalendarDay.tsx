@@ -1,6 +1,6 @@
 import { Circle, CircleOutlined, CircleTwoTone } from "@mui/icons-material";
 import { Button, Stack, Typography } from "@mui/material";
-import { CalendarDayProps } from "./props.type";
+import { CalendarDayProps } from "./CalendarDay.types";
 
 export const CalendarDay = ({
   dayOfMonth,

@@ -9,8 +9,7 @@ import {
 } from "../../helpers/calendar";
 import { CalendarDay } from "../CalendarDay";
 import { DayOfWeek } from "../../constants";
-import { Days } from "./Calendar.types";
-import { CalendarProps } from "./props.type";
+import { Days, CalendarProps } from "./Calendar.types";
 
 export const Calendar = ({
   selectedDay,

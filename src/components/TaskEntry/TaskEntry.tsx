@@ -19,7 +19,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
-import { TaskEntryProps } from "./props.type";
+import { TaskEntryProps } from "./TaskEntry.types";
 import { taskService } from "../../services/taskService";
 
 export const TaskEntry = ({

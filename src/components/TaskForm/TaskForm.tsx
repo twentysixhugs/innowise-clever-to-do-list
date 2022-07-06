@@ -6,7 +6,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { ITaskInput } from "../../interfaces/taskinput.interface";
 
 import { useNavigate } from "react-router-dom";
-import { TaskUpdateFormProps } from "./props.type";
+import { TaskUpdateFormProps } from "./TaskForm.types";
 import { StyledContainer } from "./TaskForm.styles";
 import { FormError } from "../../constants";
 import { validateTaskDate } from "../../validation/validateTaskDate";
