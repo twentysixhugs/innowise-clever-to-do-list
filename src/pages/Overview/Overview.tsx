@@ -4,6 +4,7 @@ import { Calendar } from "../../components/Calendar";
 import { Loader } from "../../components/Loader";
 import { TasksList } from "../../components/TasksList";
 import { DayOfWeek } from "../../constants";
+import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { getDayOfWeek } from "../../helpers/calendar";
 import { taskService } from "../../services/taskService";
@@ -12,11 +13,7 @@ import { Day } from "./Overview.types";
 const Overview = () => {
   const { appendTasks, resetTasks } = useTasks();
 
-  const defaultDate = new Date();
-
-  const [selectedDay, setSelectedDay] = useState(defaultDate.getDate());
-  const [selectedMonth, setSelectedMonth] = useState(defaultDate.getMonth());
-  const [selectedYear, setSelectedYear] = useState(defaultDate.getFullYear());
+  const { selectedDay, selectedMonth, selectedYear } = useSelectedDate();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isFirstLoading, setIsFirstLoading] = useState(true);
@@ -122,7 +119,9 @@ const Overview = () => {
     if (!wasRequestOnFirstRenderMade.current) {
       resetTasks();
 
-      // On mount, query tasks for today
+      // On mount, query tasks for selected date
+      const selectedDate = new Date(selectedYear, selectedMonth, selectedDay);
+
       const today = new Date();
 
       const currentDay = today.getDate();
@@ -145,11 +144,11 @@ const Overview = () => {
       setDays(createdDays);
 
       taskService
-        .getAllByDayForUser(today)
+        .getAllByDayForUser(selectedDate)
         .then((tasksData) => {
           // Query is successful, save it to query history
 
-          queriedDates.current.push(today);
+          queriedDates.current.push(selectedDate);
 
           const processedTasksData = tasksData.map(
             ({ name, description, timestamp, isCompleted, id }) => {
@@ -317,30 +316,14 @@ const Overview = () => {
     handleDaysCreation,
   ]);
 
-  const handleSelectedDayChange = (newDay: number) => {
-    setSelectedDay(newDay);
-  };
-
   if (isFirstLoading) {
     return <Loader />;
   }
 
   return (
     <>
-      <Calendar
-        selectedDay={selectedDay}
-        onSelectedDayChange={handleSelectedDayChange}
-        days={days}
-      />
-      {!isLoading ? (
-        <TasksList
-          selectedDay={selectedDay}
-          selectedMonth={selectedMonth}
-          selectedYear={selectedYear}
-        />
-      ) : (
-        <Loader />
-      )}
+      <Calendar days={days} />
+      {!isLoading ? <TasksList /> : <Loader />}
     </>
   );
 };
