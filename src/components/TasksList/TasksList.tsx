@@ -7,14 +7,12 @@ import { enUS } from "date-fns/locale";
 import { TaskEntry } from "../TaskEntry/TaskEntry";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledContainer, StyledIconButton } from "./TasksList.styles";
-import { TasksListProps } from "./TasksList.types";
+import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 
-export const TasksList = ({
-  selectedDay,
-  selectedMonth,
-  selectedYear,
-}: TasksListProps) => {
+export const TasksList = () => {
   const navigate = useNavigate();
+
+  const { selectedDay, selectedMonth, selectedYear } = useSelectedDate();
 
   const handleTaskCreate = () => {
     navigate("/new");
