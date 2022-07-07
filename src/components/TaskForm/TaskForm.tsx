@@ -1,6 +1,6 @@
 import { TextField, Typography, Button } from "@mui/material";
 import { Stack } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import { ITaskInput } from "../../interfaces/TaskInput.interface";
@@ -12,10 +12,11 @@ import { FormError } from "../../constants";
 import { validateTaskDate } from "../../validation/validateTaskDate";
 import { validateTaskDescription } from "../../validation/validateTaskDescription";
 import { validateTaskName } from "../../validation/validateTaskName";
+import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 
 export const TaskForm = ({
   onSubmit,
-  initialTaskData = { name: "", description: "", date: new Date() },
+  initialTaskData = { name: "", description: "", date: null },
   submitButtonText,
   cancelButtonText,
   title,
@@ -27,6 +28,16 @@ export const TaskForm = ({
   });
 
   const navigate = useNavigate();
+  const { selectedDay, selectedMonth, selectedYear } = useSelectedDate();
+
+  useEffect(() => {
+    if (input.date === null) {
+      setInput((prev) => ({
+        ...prev,
+        date: new Date(selectedYear, selectedMonth, selectedDay),
+      }));
+    }
+  }, [input, selectedYear, selectedMonth, selectedDay]);
 
   const [errors, setErrors] = useState<{
     [K in keyof typeof input]: FormError | "";

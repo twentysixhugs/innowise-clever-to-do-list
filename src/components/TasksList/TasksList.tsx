@@ -8,6 +8,7 @@ import { TaskEntry } from "../TaskEntry/TaskEntry";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledContainer, StyledIconButton } from "./TasksList.styles";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
+import { useEffect } from "react";
 
 export const TasksList = () => {
   const navigate = useNavigate();
@@ -18,9 +19,13 @@ export const TasksList = () => {
     navigate("/new");
   };
 
-  const { getTasksByDate, tasks: a } = useTasks();
+  const { getTasksByDate } = useTasks();
 
   const tasks = getTasksByDate(selectedYear, selectedMonth, selectedDay);
+
+  useEffect(() => {
+    console.log(tasks, selectedDay, selectedMonth, selectedYear);
+  }, [tasks, selectedDay, selectedMonth, selectedYear]);
 
   const getTitleDate = () => {
     if (selectedDay === new Date().getDate()) {

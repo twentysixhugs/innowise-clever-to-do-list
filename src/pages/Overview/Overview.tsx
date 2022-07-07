@@ -119,7 +119,9 @@ const Overview = () => {
     if (!wasRequestOnFirstRenderMade.current) {
       resetTasks();
 
-      // On mount, query tasks for today
+      // On mount, query tasks for selected date
+      const selectedDate = new Date(selectedYear, selectedMonth, selectedDay);
+
       const today = new Date();
 
       const currentDay = today.getDate();
@@ -142,11 +144,11 @@ const Overview = () => {
       setDays(createdDays);
 
       taskService
-        .getAllByDayForUser(today)
+        .getAllByDayForUser(selectedDate)
         .then((tasksData) => {
           // Query is successful, save it to query history
 
-          queriedDates.current.push(today);
+          queriedDates.current.push(selectedDate);
 
           const processedTasksData = tasksData.map(
             ({ name, description, timestamp, isCompleted, id }) => {
