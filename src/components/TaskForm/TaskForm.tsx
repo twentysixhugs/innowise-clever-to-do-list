@@ -112,6 +112,7 @@ export const TaskForm = ({
             onChange={handleDateChange}
             renderInput={(params) => <TextField {...params} />}
             disableMaskedInput={true}
+            disablePast={true}
           />
         </Stack>
         <Stack spacing={2} marginTop={3} direction="row">
