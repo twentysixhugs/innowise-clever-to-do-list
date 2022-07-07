@@ -1,17 +1,19 @@
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/material";
 import { Button } from "@mui/material";
-import { AuthError, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  AuthError,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signInWithRedirect,
+} from "firebase/auth";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
-import {
-  validateEmail,
-  validateNotEmpty,
-  validatePassword,
-} from "../../helpers/validation";
-import { UsernameEmailService } from "../../services/DatabaseService";
+import { validateEmail } from "../../validation/validateEmail";
+import { validateNotEmpty } from "../../validation/validateNotEmpty";
 import { StyledContainer } from "./SignIn.styles";
 import { StyledTextField } from "./SignIn.styles";
 
@@ -32,19 +34,19 @@ const SignIn = () => {
 
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const navigate = useNavigate();
-
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setErrors({ ...errors, [e.target.name]: "" }); // reset error on changed input field
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmitForPassword: React.FormEventHandler<HTMLFormElement> = (
+    e
+  ) => {
     e.preventDefault();
     const { email, password } = input;
 
     const validationResult: { [K in keyof typeof input]: FormError | "" } = {
-      email: validateEmail(email),
+      email: validateNotEmpty(email, FormError.EmptyEmail),
       password: validateNotEmpty(password, FormError.EmptyPassword),
     };
 
@@ -60,9 +62,6 @@ const SignIn = () => {
       setIsLoading(true);
 
       signInWithEmailAndPassword(auth, email, password)
-        .then((userCredentials) => {
-          navigate("/");
-        })
         .catch((err: AuthError) => {
           setServerError(err.message);
         })
@@ -72,25 +71,21 @@ const SignIn = () => {
     }
   };
 
+  const handleGoogleAuth: React.MouseEventHandler = (e) => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    const isMobileDevice = window.matchMedia("(max-width: 1000px)").matches;
+
+    if (isMobileDevice) {
+      signInWithRedirect(auth, provider);
+    } else {
+      signInWithPopup(auth, provider);
+    }
+  };
+
   const getComponentsFromErrors = () => {
     const components = [];
-
-    let error: keyof typeof errors;
-
-    for (error in errors) {
-      errors[error] &&
-        components.push(
-          <Typography
-            color="error"
-            key={error}
-            component="span"
-            variant="subtitle1"
-          >
-            {"\u2022 "}
-            {errors[error]}
-          </Typography>
-        );
-    }
 
     if (serverError) {
       components.push(
@@ -118,12 +113,13 @@ const SignIn = () => {
         noValidate
         justifyContent="center"
         paddingTop={15}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmitForPassword}
       >
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign in
         </Typography>
         {getComponentsFromErrors()}
+        {/* Stays here until toasts are added*/}
         <StyledTextField
           label="Email"
           variant="outlined"
@@ -146,7 +142,11 @@ const SignIn = () => {
           <Button variant="contained" type="submit">
             Sign in
           </Button>
-          <Button variant="contained" color="warning">
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handleGoogleAuth}
+          >
             Sign in with Google
           </Button>
         </Stack>

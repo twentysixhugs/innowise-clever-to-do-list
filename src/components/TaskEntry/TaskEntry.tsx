@@ -17,9 +17,10 @@ import {
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTasks } from "../../context/TasksStore";
+import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
-import { TaskEntryProps } from "./props.type";
+import { TaskEntryProps } from "./TaskEntry.types";
+import { taskService } from "../../services/taskService";
 
 export const TaskEntry = ({
   id,
@@ -53,6 +54,11 @@ export const TaskEntry = ({
   ) => {
     setConfirmDeletion(false);
     deleteTask(id);
+
+    taskService.deleteOneForUser(id).catch((err) => {
+      console.log(err.message);
+    });
+
     // сделать отсюда запрос
     // в then обновить контекст
   };
@@ -61,9 +67,13 @@ export const TaskEntry = ({
   const handleIsCompleteToggle: React.ChangeEventHandler<HTMLInputElement> = (
     e
   ) => {
-    // сделать отсюда запрос
-    // в then обновить контекст
     toggleTaskCompletion(id);
+
+    taskService
+      .updateOneForUser(id, { isCompleted: !isCompleted })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   /* Redirects on click */

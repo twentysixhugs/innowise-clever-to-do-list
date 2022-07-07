@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { Loader } from "../../Loader";
-import { ProtectedRouteProps } from "./props.type";
+import { ProtectedRouteProps } from "./ProtectedRoute.types";
 
 export const ProtectedRoute = ({
   hasPermission,

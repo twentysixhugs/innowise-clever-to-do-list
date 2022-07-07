@@ -3,17 +3,15 @@ import { Stack } from "@mui/material";
 import { useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import { ITaskInput } from "../../interfaces/taskinput.interface";
+import { ITaskInput } from "../../interfaces/TaskInput.interface";
 
 import { useNavigate } from "react-router-dom";
-import { TaskUpdateFormProps } from "./props.type";
+import { TaskUpdateFormProps } from "./TaskForm.types";
 import { StyledContainer } from "./TaskForm.styles";
 import { FormError } from "../../constants";
-import {
-  validateTaskDate,
-  validateTaskDescription,
-  validateTaskName,
-} from "../../helpers/validation";
+import { validateTaskDate } from "../../validation/validateTaskDate";
+import { validateTaskDescription } from "../../validation/validateTaskDescription";
+import { validateTaskName } from "../../validation/validateTaskName";
 
 export const TaskForm = ({
   onSubmit,
@@ -72,29 +70,6 @@ export const TaskForm = ({
     setInput({ ...input, date: value });
   };
 
-  const getComponentsFromErrors = () => {
-    const components = [];
-
-    let error: keyof typeof errors;
-
-    for (error in errors) {
-      errors[error] &&
-        components.push(
-          <Typography
-            color="error"
-            key={error}
-            component="span"
-            variant="subtitle1"
-          >
-            {"\u2022 "}
-            {errors[error]}
-          </Typography>
-        );
-    }
-
-    return components;
-  };
-
   return (
     <StyledContainer>
       <Stack
@@ -107,7 +82,7 @@ export const TaskForm = ({
         <Typography component="h1" variant="h2" marginBottom={2}>
           {title}
         </Typography>
-        {getComponentsFromErrors()}
+        {/* Stays here until toasts are added*/}
         <Stack spacing={2} marginTop="1rem">
           <TextField
             label="Task name"
@@ -117,6 +92,8 @@ export const TaskForm = ({
             name="name"
             value={input.name}
             onChange={handleChange}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             label="Task description"
@@ -126,6 +103,8 @@ export const TaskForm = ({
             autoComplete="off"
             value={input.description}
             onChange={handleChange}
+            error={!!errors.description}
+            helperText={errors.description}
           />
           <DatePicker
             label="Date"

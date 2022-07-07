@@ -1,23 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { ITask } from "../interfaces/task.interface";
-
-export interface ITasksContext {
-  tasks: ITask[];
-  toggleTaskCompletion: (id: string) => void;
-  createTask: (
-    name: string,
-    description: string,
-    date: Date,
-    id: string
-  ) => void;
-  updateTask: (
-    name: string,
-    description: string,
-    date: Date,
-    id: string
-  ) => void;
-  deleteTask: (id: string) => void;
-}
+import { ITask } from "../../interfaces/Task.interface";
+import {
+  TasksStoreState,
+  TasksStoreProps,
+  ITasksContext,
+} from "./TasksStore.types";
 
 const TasksContext = React.createContext({} as ITasksContext);
 
@@ -26,14 +13,6 @@ const TasksContext = React.createContext({} as ITasksContext);
 
 export const useTasks = () => {
   return useContext(TasksContext);
-};
-
-type TasksStoreState = {
-  tasks: ITask[];
-};
-
-type TasksStoreProps = {
-  children?: React.ReactNode;
 };
 
 export class TasksStore extends React.Component<
@@ -117,6 +96,32 @@ export class TasksStore extends React.Component<
     });
   };
 
+  handleAppendTasks = (newTasks: ITask[]) => {
+    this.setState(({ tasks }) => {
+      return {
+        tasks: [...tasks, ...newTasks],
+      };
+    });
+  };
+
+  handleGetTasksByDate = (year: number, month: number, day: number) => {
+    return this.state.tasks.filter(({ date }) => {
+      const taskYear = date.getFullYear();
+      const taskMonth = date.getMonth();
+      const taskDay = date.getDate();
+
+      if (taskYear === year && taskMonth === month && taskDay == day) {
+        return true;
+      }
+
+      return false;
+    });
+  };
+
+  resetTasks = () => {
+    this.setState(({ tasks }) => ({ tasks: [] }));
+  };
+
   render() {
     return (
       <TasksContext.Provider
@@ -126,6 +131,9 @@ export class TasksStore extends React.Component<
           createTask: this.handleCreateTask,
           updateTask: this.handleUpdateTask,
           deleteTask: this.handleDeleteTask,
+          appendTasks: this.handleAppendTasks,
+          getTasksByDate: this.handleGetTasksByDate,
+          resetTasks: this.resetTasks,
         }}
       >
         {this.props.children}

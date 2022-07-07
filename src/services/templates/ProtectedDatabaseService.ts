@@ -1,6 +1,5 @@
-import { db } from "../firebase";
+import { db } from "../../firebase";
 import {
-  collection,
   DocumentData,
   getDocs,
   query,
@@ -11,32 +10,24 @@ import {
   updateDoc,
   deleteDoc,
   DocumentReference,
+  onSnapshot,
+  Query,
 } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import {
-  ITask,
-  ITaskDBInput,
-  ITaskDBOutput,
-} from "../interfaces/task.interface";
-import { UsernameEmail } from "../interfaces/usernameEmail.interface";
+import { UpdateData } from "firebase/firestore";
+import { getAuth, onAuthStateChanged, Unsubscribe, User } from "firebase/auth";
+import { DatabaseService } from "./DatabaseService";
 
-abstract class DatabaseService {
-  protected collection;
-  protected collectionName;
-
-  constructor(collectionName: string) {
-    this.collection = collection(db, collectionName);
-    this.collectionName = collectionName;
-  }
-}
-
-class ProtectedDatabaseService<Input, Output> extends DatabaseService {
-  private user;
+export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
+  protected user: User | null = null;
 
   constructor(collectionName: string) {
     super(collectionName);
 
-    this.user = getAuth().currentUser;
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, (user) => {
+      this.user = user;
+    });
   }
 
   getAllForUser = async (): Promise<Output[]> => {
@@ -45,6 +36,34 @@ class ProtectedDatabaseService<Input, Output> extends DatabaseService {
     }
 
     const q = query(this.collection, where("uid", "==", this.user.uid));
+
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((doc) => {
+      return {
+        ...doc.data(),
+        id: doc.id,
+      } as unknown as Output;
+    });
+  };
+
+  getAllByDayForUser = async (date: Date): Promise<Output[]> => {
+    if (!this.user) {
+      throw new Error("Authentication required");
+    }
+
+    // No matter what time the timestamp has,
+    // this method will query everything that matches its day
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+
+    const q = query(
+      this.collection,
+      where("uid", "==", this.user.uid),
+      where("timestamp", ">=", new Date(year, month, day)),
+      where("timestamp", "<", new Date(year, month, day + 1))
+    );
 
     const snapshot = await getDocs(q);
 
@@ -99,12 +118,16 @@ class ProtectedDatabaseService<Input, Output> extends DatabaseService {
     return await addDoc(this.collection, { ...data, uid: this.user.uid });
   };
 
-  updateOneForUser = async (path: string, data: Input) => {
+  updateOneForUser = async (path: string, data: UpdateData<Input>) => {
     if (!this.user) {
       throw new Error("Authentication required");
     }
 
-    const docRef = doc(db, this.collectionName, path);
+    const docRef = doc(
+      db,
+      this.collectionName,
+      path
+    ) as DocumentReference<Input>;
 
     return await updateDoc(docRef, data);
   };
@@ -119,22 +142,3 @@ class ProtectedDatabaseService<Input, Output> extends DatabaseService {
     return await deleteDoc(docRef);
   };
 }
-
-class PublicDatabaseService<T> extends DatabaseService {
-  constructor(collectionName: string) {
-    super(collectionName);
-  }
-
-  createOne = async (data: T) => {
-    return await addDoc(this.collection, data);
-  };
-}
-
-export const TaskService = new ProtectedDatabaseService<
-  ITaskDBInput,
-  ITaskDBOutput
->("tasks");
-
-export const UsernameEmailService = new PublicDatabaseService<UsernameEmail>(
-  "usernamesForEmails"
-);
