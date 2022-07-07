@@ -10,13 +10,15 @@ import {
   updateDoc,
   deleteDoc,
   DocumentReference,
+  onSnapshot,
+  Query,
 } from "firebase/firestore";
 import { UpdateData } from "firebase/firestore";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { getAuth, onAuthStateChanged, Unsubscribe, User } from "firebase/auth";
 import { DatabaseService } from "./DatabaseService";
 
 export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
-  private user: User | null = null;
+  protected user: User | null = null;
 
   constructor(collectionName: string) {
     super(collectionName);
