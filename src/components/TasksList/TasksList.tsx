@@ -23,10 +23,6 @@ export const TasksList = () => {
 
   const tasks = getTasksByDate(selectedYear, selectedMonth, selectedDay);
 
-  useEffect(() => {
-    console.log(tasks, selectedDay, selectedMonth, selectedYear);
-  }, [tasks, selectedDay, selectedMonth, selectedYear]);
-
   const getTitleDate = () => {
     if (selectedDay === new Date().getDate()) {
       return "today";
