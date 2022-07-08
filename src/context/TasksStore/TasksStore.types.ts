@@ -27,4 +27,10 @@ export interface ITasksContext {
   ) => void;
   deleteTask: (id: string) => void;
   resetTasks: () => void;
+  hasTasksForDate: (
+    type: "completed" | "not completed",
+    year: number,
+    month: number,
+    day: number
+  ) => boolean;
 }

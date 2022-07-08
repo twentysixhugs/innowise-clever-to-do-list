@@ -12,7 +12,6 @@ import {
 import { useState } from "react";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
-import { validateEmail } from "../../validation/validateEmail";
 import { validateNotEmpty } from "../../validation/validateNotEmpty";
 import { StyledContainer } from "./SignIn.styles";
 import { StyledTextField } from "./SignIn.styles";
