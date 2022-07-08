@@ -8,7 +8,6 @@ import { TaskEntry } from "../TaskEntry/TaskEntry";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledContainer, StyledIconButton } from "./TasksList.styles";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
-import { useEffect } from "react";
 
 export const TasksList = () => {
   const navigate = useNavigate();
@@ -29,8 +28,6 @@ export const TasksList = () => {
     }
 
     const selectedDate = new Date(selectedYear, selectedMonth, selectedDay);
-
-    const monthName = format(selectedDate, "PP", { locale: enUS });
 
     return `on ${format(selectedDate, "PP", { locale: enUS })}`;
   };

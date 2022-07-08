@@ -1,6 +1,11 @@
 import { DayOfWeek } from "../../constants";
-import { Day } from "../../pages/Overview/Overview.types";
 
-export type CalendarProps = {
-  days: Day[];
+export type Day = {
+  isSelected: boolean;
+  day: number;
+  month: number;
+  year: number;
+  dayOfWeek: typeof DayOfWeek[keyof typeof DayOfWeek];
+  hasCompletedTasks: boolean;
+  hasNotCompletedTasks: boolean;
 };

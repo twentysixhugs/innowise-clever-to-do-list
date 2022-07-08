@@ -118,6 +118,29 @@ export class TasksStore extends React.Component<
     });
   };
 
+  hasTasksForDate = (
+    type: "completed" | "not completed",
+    year: number,
+    month: number,
+    day: number
+  ) => {
+    return !!this.state.tasks.find(({ date, isCompleted }) => {
+      const taskYear = date.getFullYear();
+      const taskMonth = date.getMonth();
+      const taskDay = date.getDate();
+
+      if (taskYear === year && taskMonth === month && taskDay === day) {
+        if (
+          (type === "completed" && isCompleted) ||
+          (type === "not completed" && !isCompleted)
+        )
+          return true;
+      }
+
+      return false;
+    });
+  };
+
   resetTasks = () => {
     this.setState(({ tasks }) => ({ tasks: [] }));
   };
@@ -134,6 +157,7 @@ export class TasksStore extends React.Component<
           appendTasks: this.handleAppendTasks,
           getTasksByDate: this.handleGetTasksByDate,
           resetTasks: this.resetTasks,
+          hasTasksForDate: this.hasTasksForDate,
         }}
       >
         {this.props.children}
