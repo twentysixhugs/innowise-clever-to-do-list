@@ -1,1 +1,3 @@
-export { default } from "./TaskCreate";
+import { lazy } from "react";
+
+export const TaskCreate = lazy(() => import("./TaskCreate"));

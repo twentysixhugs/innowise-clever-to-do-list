@@ -1,15 +1,14 @@
 import { Suspense, lazy, useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useAuthStateObserver } from "../../hooks/useAuthStateObserver";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { Header } from "../Header";
 import { Loader } from "../Loader/Loader";
-import { useAuthStateObserver } from "../../hooks/useAuthStateObserver";
-
-const Overview = lazy(() => import("../../pages/Overview"));
-const SignIn = lazy(() => import("../../pages/SignIn"));
-const SignUp = lazy(() => import("../../pages/SignUp"));
-const TaskCreate = lazy(() => import("../../pages/TaskCreate"));
-const TaskUpdate = lazy(() => import("../../pages/TaskUpdate"));
+import { SignIn } from "../../pages/SignIn";
+import { SignUp } from "../../pages/SignUp";
+import { Overview } from "../../pages/Overview";
+import { TaskCreate } from "../../pages/TaskCreate";
+import { TaskUpdate } from "../../pages/TaskUpdate";
 
 export const RouteSwitch = () => {
   const [user, isLoading] = useAuthStateObserver();
