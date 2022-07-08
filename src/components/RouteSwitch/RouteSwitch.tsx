@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState, useEffect } from "react";
+import { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useAuthStateObserver } from "../../hooks/useAuthStateObserver";
 import { ProtectedRoute } from "./ProtectedRoute";
