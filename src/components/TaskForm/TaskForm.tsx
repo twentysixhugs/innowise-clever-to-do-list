@@ -58,7 +58,7 @@ export const TaskForm = ({
 
     const validationResult: { [K in keyof typeof input]: FormError | "" } = {
       name: validateTaskName(name),
-      description: validateTaskDescription(description),
+      description: "",
       date: validateTaskDate(date),
     };
 
@@ -109,7 +109,6 @@ export const TaskForm = ({
           <TextField
             label="Task description"
             variant="outlined"
-            required
             name="description"
             autoComplete="off"
             value={input.description}
