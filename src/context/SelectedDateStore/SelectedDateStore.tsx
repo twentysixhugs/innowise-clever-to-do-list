@@ -8,7 +8,9 @@ import {
 
 const defaultDate = new Date();
 
-const SelectedDateContext = React.createContext({} as ISelectedDateContext);
+export const SelectedDateContext = React.createContext(
+  {} as ISelectedDateContext
+);
 
 export const useSelectedDate = () => {
   return useContext(SelectedDateContext);
