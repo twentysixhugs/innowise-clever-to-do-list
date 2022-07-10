@@ -158,7 +158,7 @@ export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
             <Button
               variant="outlined"
               onClick={() => {
-                this.setState({ navigateTo: -1 });
+                this.setState({ navigateTo: "/" });
               }}
             >
               {cancelButtonText}
