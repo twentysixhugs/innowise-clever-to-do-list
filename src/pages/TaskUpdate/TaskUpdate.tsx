@@ -5,6 +5,8 @@ import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { taskService } from "../../services/taskService";
 import { Loader } from "../../components/Loader";
+import { FirebaseError } from "@firebase/util";
+import { Toast } from "../../components/Toast";
 
 const TaskUpdate = () => {
   const { tasks, updateTask } = useTasks();
@@ -13,6 +15,8 @@ const TaskUpdate = () => {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [serverError, setServerError] = useState<null | string>(null);
 
   const taskToUpdate = tasks.find((task) => task.id === id);
 
@@ -23,6 +27,8 @@ const TaskUpdate = () => {
       setIsLoading(true);
 
       const { id } = taskToUpdate;
+
+      setServerError(null);
 
       taskService
         .updateOneForUser(id, {
@@ -38,28 +44,45 @@ const TaskUpdate = () => {
           const { name, description, timestamp, id } = data;
 
           updateTask(name, description, timestamp.toDate(), id);
-          setIsLoading(false);
           navigate("/");
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((err: FirebaseError) => {
+          setServerError(err.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     },
     [updateTask, navigate, taskToUpdate]
   );
+
+  const handleToastClose = (
+    e: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    setServerError(null);
+  };
 
   if (isLoading) {
     return <Loader />;
   }
 
   return (
-    <TaskForm
-      initialTaskData={taskToUpdate}
-      onSubmit={handleSubmit}
-      cancelButtonText="Cancel"
-      submitButtonText="Update"
-      title="Update task"
-    />
+    <>
+      <Toast
+        color="error"
+        message={serverError}
+        isOpen={!!serverError}
+        onClose={handleToastClose}
+      />
+      <TaskForm
+        initialTaskData={taskToUpdate}
+        onSubmit={handleSubmit}
+        cancelButtonText="Cancel"
+        submitButtonText="Update"
+        title="Update task"
+      />
+    </>
   );
 };
 

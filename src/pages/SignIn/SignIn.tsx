@@ -9,7 +9,8 @@ import {
   signInWithPopup,
   signInWithRedirect,
 } from "firebase/auth";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Toast } from "../../components/Toast";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
 import { validateNotEmpty } from "../../validation/validateNotEmpty";
@@ -83,30 +84,23 @@ const SignIn = () => {
     }
   };
 
-  const getComponentsFromErrors = () => {
-    const components = [];
-
-    if (serverError) {
-      components.push(
-        <Typography
-          key={serverError}
-          color="error"
-          component="span"
-          variant="subtitle1"
-        >
-          {"\u2022 "}
-          {serverError}
-        </Typography>
-      );
-    }
-
-    return components;
+  const handleToastClose = (
+    e: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    setServerError(null);
   };
 
   if (isLoading) return <Loader />;
 
   return (
     <StyledContainer>
+      <Toast
+        color="error"
+        message={serverError}
+        isOpen={!!serverError}
+        onClose={handleToastClose}
+      />
       <Stack
         component="form"
         noValidate
@@ -117,7 +111,6 @@ const SignIn = () => {
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign in
         </Typography>
-        {getComponentsFromErrors()}
         {/* Stays here until toasts are added*/}
         <StyledTextField
           label="Email"

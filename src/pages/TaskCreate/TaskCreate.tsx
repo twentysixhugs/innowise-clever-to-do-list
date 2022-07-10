@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "../../components/Loader";
 import { TaskForm } from "../../components/TaskForm";
+import { Toast } from "../../components/Toast";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { taskService } from "../../services/taskService";
 
@@ -13,9 +14,13 @@ const TaskCreate = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [serverError, setServerError] = useState<null | string>(null);
+
   const handleSubmit = useCallback(
     (name: string, description: string, date: Date) => {
       setIsLoading(true);
+
+      setServerError(null);
 
       taskService
         .createOneForUser({
@@ -36,23 +41,41 @@ const TaskCreate = () => {
           navigate("/");
         })
         .catch((err) => {
-          console.log(err);
+          setServerError(err.message);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     },
     [navigate, createTask]
   );
+
+  const handleToastClose = (
+    e: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    setServerError(null);
+  };
 
   if (isLoading) {
     return <Loader />;
   }
 
   return (
-    <TaskForm
-      onSubmit={handleSubmit}
-      cancelButtonText="Cancel"
-      submitButtonText="Create"
-      title="Create task"
-    />
+    <>
+      <Toast
+        color="error"
+        message={serverError}
+        isOpen={!!serverError}
+        onClose={handleToastClose}
+      />
+      <TaskForm
+        onSubmit={handleSubmit}
+        cancelButtonText="Cancel"
+        submitButtonText="Create"
+        title="Create task"
+      />
+    </>
   );
 };
 

@@ -17,6 +17,7 @@ import { validatePasswordConfirm } from "../../validation/validatePasswordConfir
 import { validatePassword } from "../../validation/validatePassword";
 import { StyledContainer } from "./SignUp.styles";
 import { StyledTextField } from "./SignUp.styles";
+import { Toast } from "../../components/Toast";
 
 const SignUp = () => {
   const [input, setInput] = useState({
@@ -88,24 +89,11 @@ const SignUp = () => {
     }
   };
 
-  const getComponentsFromErrors = () => {
-    const components = [];
-
-    if (serverError) {
-      components.push(
-        <Typography
-          key={serverError}
-          color="error"
-          component="span"
-          variant="subtitle1"
-        >
-          {"\u2022 "}
-          {serverError}
-        </Typography>
-      );
-    }
-
-    return components;
+  const handleToastClose = (
+    e: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    setServerError(null);
   };
 
   if (isLoading) {
@@ -124,9 +112,12 @@ const SignUp = () => {
         <Typography component="h1" variant="h2" marginBottom={2}>
           Sign up
         </Typography>
-        {getComponentsFromErrors()}
-        {/* Stays here until toasts are added*/}
-
+        <Toast
+          color="error"
+          message={serverError}
+          isOpen={!!serverError}
+          onClose={handleToastClose}
+        />
         <StyledTextField
           label="Email"
           variant="outlined"
