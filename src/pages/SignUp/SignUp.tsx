@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 import { Stack } from "@mui/material";
 import { Button } from "@mui/material";
 import {
@@ -15,9 +15,10 @@ import { FormError } from "../../constants";
 import { validateEmail } from "../../validation/validateEmail";
 import { validatePasswordConfirm } from "../../validation/validatePasswordConfirm";
 import { validatePassword } from "../../validation/validatePassword";
-import { StyledContainer } from "./SignUp.styles";
-import { StyledTextField } from "./SignUp.styles";
 import { Toast } from "../../components/Toast";
+import { StyledContainer } from "../../components/styled/StyledContainer";
+import { FormButtons } from "../../components/styled/FormButtons";
+import { PageTitle } from "../../components/styled/PageTitle";
 
 const SignUp = () => {
   const [input, setInput] = useState({
@@ -105,20 +106,17 @@ const SignUp = () => {
       <Stack
         component="form"
         noValidate
-        justifyContent="center"
-        paddingTop={15}
         onSubmit={handleSubmitWithPassword}
+        spacing={2}
       >
-        <Typography component="h1" variant="h2" marginBottom={2}>
-          Sign up
-        </Typography>
+        <PageTitle>Sign up</PageTitle>
         <Toast
           color="error"
           message={serverError}
           isOpen={!!serverError}
           onClose={handleToastClose}
         />
-        <StyledTextField
+        <TextField
           label="Email"
           variant="outlined"
           required
@@ -129,7 +127,7 @@ const SignUp = () => {
           error={!!errors.email}
           helperText={errors.email}
         />
-        <StyledTextField
+        <TextField
           label="Password"
           variant="outlined"
           required
@@ -140,7 +138,7 @@ const SignUp = () => {
           error={!!errors.password}
           helperText={errors.password}
         />
-        <StyledTextField
+        <TextField
           label="Confirm password"
           variant="outlined"
           required
@@ -152,7 +150,7 @@ const SignUp = () => {
           helperText={errors.passwordConfirm}
         />
 
-        <Stack spacing={2} marginTop={4} direction="row">
+        <FormButtons>
           <Button variant="contained" type="submit">
             Sign up
           </Button>
@@ -163,7 +161,7 @@ const SignUp = () => {
           >
             Sign up with Google
           </Button>
-        </Stack>
+        </FormButtons>
       </Stack>
     </StyledContainer>
   );

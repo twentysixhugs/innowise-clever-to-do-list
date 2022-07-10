@@ -1,14 +1,15 @@
-import { TextField, Typography, Button } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { Stack } from "@mui/material";
 import React from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Navigate } from "react-router-dom";
 import { TaskFormProps, TaskFormState } from "./TaskForm.types";
-import { StyledContainer } from "./TaskForm.styles";
 import { FormError } from "../../constants";
 import { validateTaskDate } from "../../validation/validateTaskDate";
 import { validateTaskName } from "../../validation/validateTaskName";
 import { SelectedDateContext } from "../../context/SelectedDateStore/SelectedDateStore";
+import { StyledContainer } from "../styled/StyledContainer";
+import { PageTitle } from "../styled/PageTitle";
 
 export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
   static contextType = SelectedDateContext;
@@ -109,16 +110,8 @@ export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
 
     return (
       <StyledContainer>
-        <Stack
-          component="form"
-          noValidate
-          justifyContent="center"
-          paddingTop={15}
-          onSubmit={this.handleSubmit}
-        >
-          <Typography component="h1" variant="h2" marginBottom={2}>
-            {title}
-          </Typography>
+        <Stack component="form" noValidate onSubmit={this.handleSubmit}>
+          <PageTitle>{title}</PageTitle>
           {/* Stays here until toasts are added*/}
           <Stack spacing={2} marginTop="1rem">
             <TextField
