@@ -1,3 +1,4 @@
+import { PaperProps } from "@mui/material";
 import { DayOfWeek } from "../../constants";
 
 export type CalendarDayProps = {
@@ -8,3 +9,6 @@ export type CalendarDayProps = {
   isSelected: boolean;
   onClick: React.MouseEventHandler;
 };
+
+export type StyledPaperProps = Pick<CalendarDayProps, "isSelected"> &
+  PaperProps;

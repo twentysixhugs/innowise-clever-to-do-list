@@ -10,7 +10,7 @@ export const App = () => {
   return (
     <SelectedDateStore>
       <TasksStore>
-        <ThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={lightTheme}>
           <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <RouteSwitch />
