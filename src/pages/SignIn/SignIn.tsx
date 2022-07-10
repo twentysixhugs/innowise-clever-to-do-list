@@ -120,6 +120,8 @@ const SignIn = () => {
           type="email"
           value={input.email}
           onChange={handleChange}
+          error={!!errors.email}
+          helperText={errors.email}
         />
         <StyledTextField
           label="Password"
@@ -129,6 +131,8 @@ const SignIn = () => {
           name="password"
           value={input.password}
           onChange={handleChange}
+          error={!!errors.password}
+          helperText={errors.password}
         />
         <Stack spacing={2} marginTop={4} direction="row">
           <Button variant="contained" type="submit">
