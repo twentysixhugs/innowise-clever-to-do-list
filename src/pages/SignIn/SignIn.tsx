@@ -63,7 +63,21 @@ const SignIn = () => {
 
       signInWithEmailAndPassword(auth, email, password)
         .catch((err: AuthError) => {
-          setServerError(err.message);
+          if (err.code === "auth/wrong-password") {
+            setServerError("Incorrect password. Please, try again");
+
+            return;
+          }
+
+          if (err.code === "auth/invalid-email") {
+            setServerError(
+              "A user with this email does not exist. Please, try again"
+            );
+
+            return;
+          }
+
+          setServerError(err.code);
         })
         .finally(() => {
           setIsLoading(false);
