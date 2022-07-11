@@ -12,8 +12,8 @@ export const StyledPaper = styled(Paper, {
   const color = theme.palette.getContrastText(background);
 
   return {
-    width: "3.5rem",
-    height: "4rem",
+    width: "4.5rem",
+    height: "5rem",
     background,
     color,
     display: "flex",

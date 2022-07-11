@@ -4,7 +4,7 @@ import { Container } from "@mui/system";
 export const StyledContainer = styled(Container)(({ theme }) => ({
   height: "100%",
   [theme.breakpoints.up("md")]: {
-    paddingTop: theme.spacing(15),
+    paddingTop: theme.spacing(10),
     paddingBottom: theme.spacing(10),
   },
   [theme.breakpoints.down("md")]: {
