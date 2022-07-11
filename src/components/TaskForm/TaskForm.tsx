@@ -17,9 +17,9 @@ export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
 
   state: TaskFormState = {
     input: {
-      name: "",
-      description: "",
-      date: null,
+      name: this.props.initialTaskData?.name || "",
+      description: this.props.initialTaskData?.description || "",
+      date: this.props.initialTaskData?.date || null,
     },
     errors: {
       name: "",
@@ -30,23 +30,8 @@ export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
   };
 
   componentDidMount() {
-    const { input } = this.state;
-
-    const initialTaskData = this.props.initialTaskData;
-
-    if (initialTaskData) {
-      this.setState({
-        input: {
-          name: initialTaskData.name,
-          description: initialTaskData.description,
-          date: initialTaskData.date,
-        },
-      });
-
-      return;
-    }
-
     const { selectedYear, selectedMonth, selectedDay } = this.context!;
+    const { input } = this.state;
 
     if (input.date === null) {
       this.setState({
