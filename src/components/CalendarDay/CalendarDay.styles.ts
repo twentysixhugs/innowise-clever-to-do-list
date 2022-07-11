@@ -5,20 +5,9 @@ import { StyledPaperProps } from "./CalendarDay.types";
 export const StyledPaper = styled(Paper, {
   shouldForwardProp: (prop) => prop !== "isSelected",
 })<StyledPaperProps>(({ theme, isSelected }) => {
-  const { mode } = theme.palette;
-
-  const { black, white } = theme.palette.common;
-
-  let background = theme.palette.background.paper;
-
-  if (isSelected) {
-    if (mode === "light") {
-      background = black;
-    }
-    if (mode === "dark") {
-      background = theme.palette.warning.dark;
-    }
-  }
+  const background = isSelected
+    ? theme.palette.background.paperHighlight
+    : theme.palette.background.paper;
 
   const color = theme.palette.getContrastText(background);
 
