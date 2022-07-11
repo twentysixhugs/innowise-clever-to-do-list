@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DayOfWeek } from "../../constants";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 import { useTasks } from "../../context/TasksStore/TasksStore";
@@ -19,6 +19,7 @@ export const Calendar = () => {
   const currentMovement = useRef(0);
   const previousTouch = useRef<React.Touch>();
   const slider = useRef<HTMLDivElement>();
+  const isDragging = useRef(false);
 
   useEffect(() => {
     // Returns days created for the specified params, and functions
@@ -61,18 +62,17 @@ export const Calendar = () => {
       return createdDays;
     };
 
-    const today = new Date();
+    const firstDayInMonth = new Date(selectedYear, selectedMonth, 1).getDate();
 
-    const currentDay = today.getDate();
-    const lastDayInMonthNumber = new Date(
+    const lastDayInMonth = new Date(
       selectedYear,
       selectedMonth + 1,
       0
     ).getDate();
 
     const createdDays = handleDaysCreation(
-      currentDay,
-      lastDayInMonthNumber,
+      firstDayInMonth,
+      lastDayInMonth,
       selectedMonth,
       selectedYear,
       selectedDay
@@ -83,12 +83,19 @@ export const Calendar = () => {
 
   const handleMouseDrag: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (e.buttons === 1) {
+      isDragging.current = true;
+
+      if (e.movementX >= -1 && e.movementX <= 1) return;
+
       currentMovement.current += e.movementX;
+
       slider.current!.style.transform = `translateX(${currentMovement.current}px)`;
     }
   };
 
   const handleTouchDrag: React.TouchEventHandler<HTMLDivElement> = (e) => {
+    isDragging.current = true;
+
     // there can be multiple touches, take the first one
     const touch = e.touches[0];
 
@@ -103,6 +110,30 @@ export const Calendar = () => {
     slider.current!.style.transform = `translateX(${currentMovement.current}px)`;
   };
 
+  const handleMouseUp: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    setTimeout(() => {
+      isDragging.current = false;
+    }, 0);
+  };
+
+  const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = (e) => {
+    setTimeout(() => {}, 0);
+    isDragging.current = false;
+    previousTouch.current = undefined;
+  };
+
+  const handleSelectedDayChange = (
+    day: number
+  ): React.MouseEventHandler<HTMLDivElement> => {
+    return (e) => {
+      if (isDragging.current) {
+        return;
+      }
+
+      updateSelectedDate("day", day);
+    };
+  };
+
   return (
     <Stack
       spacing={3}
@@ -110,6 +141,11 @@ export const Calendar = () => {
       ref={slider}
       onMouseMove={handleMouseDrag}
       onTouchMove={handleTouchDrag}
+      onMouseUp={handleMouseUp}
+      onTouchEnd={handleTouchEnd}
+      sx={{
+        transition: "transform 0.1s",
+      }}
     >
       {days.map(
         ({
@@ -121,12 +157,13 @@ export const Calendar = () => {
         }) => (
           <CalendarDay
             key={day}
-            onClick={(e) => updateSelectedDate("day", day)}
+            onClick={handleSelectedDayChange(day)}
             dayOfMonth={day}
             dayOfWeek={dayOfWeek}
             hasCompletedTasks={hasCompletedTasks}
             hasNotCompletedTasks={hasNotCompletedTasks}
             isSelected={isSelected}
+            isPast={day < new Date().getDate()}
           />
         )
       )}

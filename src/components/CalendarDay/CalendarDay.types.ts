@@ -7,8 +7,9 @@ export type CalendarDayProps = {
   hasCompletedTasks: boolean;
   hasNotCompletedTasks: boolean;
   isSelected: boolean;
+  isPast: boolean;
   onClick: React.MouseEventHandler;
 };
 
-export type StyledPaperProps = Pick<CalendarDayProps, "isSelected"> &
+export type StyledPaperProps = Pick<CalendarDayProps, "isSelected" | "isPast"> &
   PaperProps;

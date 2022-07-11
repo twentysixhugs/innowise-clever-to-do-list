@@ -9,11 +9,12 @@ export const CalendarDay = ({
   hasCompletedTasks,
   hasNotCompletedTasks,
   isSelected,
+  isPast,
   onClick,
 }: CalendarDayProps) => {
   return (
     <Stack alignItems="center" padding={1} spacing={1}>
-      <StyledPaper onClick={onClick} isSelected={isSelected}>
+      <StyledPaper onClick={onClick} isSelected={isSelected} isPast={isPast}>
         <Typography>{dayOfWeek}</Typography>
         <Typography>{dayOfMonth}</Typography>
       </StyledPaper>

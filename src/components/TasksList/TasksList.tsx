@@ -33,6 +33,8 @@ export const TasksList = () => {
     return `on ${format(selectedDate, "PP", { locale: enUS })}`;
   };
 
+  const showCreateButton = selectedDay >= new Date().getDate();
+
   return (
     <StyledContainer>
       <Stack spacing={3}>
@@ -40,9 +42,11 @@ export const TasksList = () => {
           <PageTitle>
             {tasks.length} tasks {getTitleDate()}
           </PageTitle>
-          <StyledIconButton onClick={handleTaskCreate}>
-            <Add fontSize="large" />
-          </StyledIconButton>
+          {showCreateButton && (
+            <StyledIconButton onClick={handleTaskCreate}>
+              <Add fontSize="large" />
+            </StyledIconButton>
+          )}
         </Stack>
 
         {tasks.map(({ name, description, isCompleted, id }) => (

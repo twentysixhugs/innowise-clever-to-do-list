@@ -3,16 +3,19 @@ import { Paper, PaperProps } from "@mui/material";
 import { StyledPaperProps } from "./CalendarDay.types";
 
 export const StyledPaper = styled(Paper, {
-  shouldForwardProp: (prop) => prop !== "isSelected",
-})<StyledPaperProps>(({ theme, isSelected }) => {
+  shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isPast",
+})<StyledPaperProps>(({ theme, isSelected, isPast }) => {
   const background = isSelected
     ? theme.palette.background.paperHighlight
     : theme.palette.background.paper;
 
-  const color = theme.palette.getContrastText(background);
+  const color =
+    !isPast || isSelected
+      ? theme.palette.getContrastText(background)
+      : theme.palette.text.secondary;
 
   return {
-    width: "4.5rem",
+    minWidth: "4.5rem",
     height: "5rem",
     background,
     color,
