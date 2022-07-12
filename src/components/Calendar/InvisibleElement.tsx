@@ -12,5 +12,5 @@ InvisibleElement.displayName = "InvisibleElement";
 const StyledInvisibleElement = styled("div")(() => ({
   minWidth: "10rem",
   height: "5rem", // height must be the same as the one that CalendarDay has
-  background: "red",
+  opacity: "0",
 }));
