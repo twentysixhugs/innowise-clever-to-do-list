@@ -1,85 +1,20 @@
 import { Stack } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { DayOfWeek } from "../../constants";
+import React, { useRef } from "react";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
-import { useTasks } from "../../context/TasksStore/TasksStore";
-import { getDayOfWeek } from "../../helpers/calendar";
 
 import { CalendarDay } from "../CalendarDay";
-import { Day } from "./Calendar.types";
+import { useDays } from "./useDays";
 
 export const Calendar = () => {
   const { updateSelectedDate, selectedDay, selectedMonth, selectedYear } =
     useSelectedDate();
 
-  const { hasTasksForDate, tasks } = useTasks();
-
-  const [days, setDays] = useState<Day[]>([]);
+  const days = useDays(selectedDay, selectedMonth, selectedYear);
 
   const currentMovement = useRef(0);
   const previousTouch = useRef<React.Touch>();
   const slider = useRef<HTMLDivElement>();
   const isDragging = useRef(false);
-
-  useEffect(() => {
-    // Returns days created for the specified params, and functions
-    // to unsubscribe from listening on DB changes related to
-    // tasks count on each day
-    const handleDaysCreation = (
-      from: number,
-      to: number,
-      month: number,
-      year: number,
-      selectedDay: number
-    ) => {
-      const createdDays: Day[] = [];
-
-      for (let i = from; i <= to; i++) {
-        const dayOfWeek = DayOfWeek[getDayOfWeek(year, month, i - 1)];
-
-        const hasCompletedTasks = hasTasksForDate("completed", year, month, i);
-
-        const hasNotCompletedTasks = hasTasksForDate(
-          "not completed",
-          year,
-          month,
-          i
-        );
-
-        // Will select current day by default if currentDay is passed
-        createdDays.push({
-          // select day by default
-          isSelected: i === selectedDay ? true : false,
-          day: i,
-          dayOfWeek,
-          month,
-          year,
-          hasCompletedTasks,
-          hasNotCompletedTasks,
-        });
-      }
-
-      return createdDays;
-    };
-
-    const firstDayInMonth = new Date(selectedYear, selectedMonth, 1).getDate();
-
-    const lastDayInMonth = new Date(
-      selectedYear,
-      selectedMonth + 1,
-      0
-    ).getDate();
-
-    const createdDays = handleDaysCreation(
-      firstDayInMonth,
-      lastDayInMonth,
-      selectedMonth,
-      selectedYear,
-      selectedDay
-    );
-
-    setDays(createdDays);
-  }, [selectedYear, selectedMonth, selectedDay, hasTasksForDate, tasks]);
 
   const handleMouseDrag: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if (e.buttons === 1) {
