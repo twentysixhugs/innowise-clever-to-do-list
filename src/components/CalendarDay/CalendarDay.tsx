@@ -13,6 +13,7 @@ export const CalendarDay = React.forwardRef<HTMLDivElement, CalendarDayProps>(
       hasNotCompletedTasks,
       isSelected,
       isPast,
+      isToday,
       onClick,
     },
     ref
@@ -25,7 +26,12 @@ export const CalendarDay = React.forwardRef<HTMLDivElement, CalendarDayProps>(
         ref={ref}
         draggable={false}
       >
-        <StyledPaper onClick={onClick} isSelected={isSelected} isPast={isPast}>
+        <StyledPaper
+          onClick={onClick}
+          isSelected={isSelected}
+          isPast={isPast}
+          isToday={isToday}
+        >
           <Typography>{dayOfWeek}</Typography>
           <Typography>{dayOfMonth}</Typography>
         </StyledPaper>
