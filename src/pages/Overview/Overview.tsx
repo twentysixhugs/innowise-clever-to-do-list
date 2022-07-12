@@ -5,18 +5,22 @@ import { TasksList } from "../../components/TasksList";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { taskService } from "../../services/taskService";
+import { usePrevious } from "./usePrevious";
 
 const Overview = () => {
   const { appendTasks, resetTasks, tasks } = useTasks();
 
   const { selectedDay, selectedMonth, selectedYear } = useSelectedDate();
 
-  const [isFirstLoading, setIsFirstLoading] = useState(true);
+  const previousSelectedMonth = usePrevious(selectedMonth);
+  const previousSelectedYear = usePrevious(selectedYear);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const wasRequestOnFirstRenderMade = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!wasRequestOnFirstRenderMade.current && !tasks.length) {
+    if (!tasks.length) {
       taskService
         .getAllForUser()
         .then((tasksData) => {
@@ -35,22 +39,58 @@ const Overview = () => {
           appendTasks(processedTasksData);
         })
         .finally(() => {
-          setIsFirstLoading(false);
+          setIsLoading(false);
           wasRequestOnFirstRenderMade.current = true;
         });
     } else {
-      setIsFirstLoading(false);
+      setIsLoading(false);
+    }
+  }, [appendTasks, tasks]);
+
+  useEffect(() => {
+    if (!previousSelectedMonth || !previousSelectedYear) return;
+
+    if (
+      selectedMonth !== previousSelectedMonth ||
+      selectedYear !== previousSelectedYear
+    ) {
+      // reset tasks and query new ones for the new date
+      resetTasks();
+
+      setIsLoading(true);
+
+      taskService
+        .getAllForUser()
+        .then((tasksData) => {
+          const processedTasksData = tasksData.map(
+            ({ name, description, timestamp, isCompleted, id }) => {
+              return {
+                name,
+                description,
+                date: timestamp.toDate(),
+                isCompleted,
+                id,
+              };
+            }
+          );
+
+          appendTasks(processedTasksData);
+        })
+        .finally(() => {
+          setIsLoading(false);
+          wasRequestOnFirstRenderMade.current = true;
+        });
     }
   }, [
-    appendTasks,
-    resetTasks,
-    selectedDay,
     selectedMonth,
     selectedYear,
-    tasks,
+    previousSelectedMonth,
+    previousSelectedYear,
+    resetTasks,
+    appendTasks,
   ]);
 
-  if (isFirstLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
