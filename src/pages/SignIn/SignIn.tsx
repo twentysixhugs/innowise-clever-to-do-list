@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 import { Stack } from "@mui/material";
 import { Button } from "@mui/material";
 import {
@@ -9,12 +9,14 @@ import {
   signInWithPopup,
   signInWithRedirect,
 } from "firebase/auth";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Toast } from "../../components/Toast";
 import { Loader } from "../../components/Loader";
 import { FormError } from "../../constants";
 import { validateNotEmpty } from "../../validation/validateNotEmpty";
-import { StyledContainer } from "./SignIn.styles";
-import { StyledTextField } from "./SignIn.styles";
+import { StyledContainer } from "../../components/styled/StyledContainer";
+import { FormButtons } from "../../components/styled/FormButtons";
+import { PageTitle } from "../../components/styled/PageTitle";
 
 const SignIn = () => {
   const [input, setInput] = useState({
@@ -62,7 +64,21 @@ const SignIn = () => {
 
       signInWithEmailAndPassword(auth, email, password)
         .catch((err: AuthError) => {
-          setServerError(err.message);
+          if (err.code === "auth/wrong-password") {
+            setServerError("Incorrect password. Please, try again");
+
+            return;
+          }
+
+          if (err.code === "auth/invalid-email") {
+            setServerError(
+              "A user with this email does not exist. Please, try again"
+            );
+
+            return;
+          }
+
+          setServerError(err.code);
         })
         .finally(() => {
           setIsLoading(false);
@@ -83,43 +99,32 @@ const SignIn = () => {
     }
   };
 
-  const getComponentsFromErrors = () => {
-    const components = [];
-
-    if (serverError) {
-      components.push(
-        <Typography
-          key={serverError}
-          color="error"
-          component="span"
-          variant="subtitle1"
-        >
-          {"\u2022 "}
-          {serverError}
-        </Typography>
-      );
-    }
-
-    return components;
+  const handleToastClose = (
+    e: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    setServerError(null);
   };
 
   if (isLoading) return <Loader />;
 
   return (
     <StyledContainer>
+      <Toast
+        color="error"
+        message={serverError}
+        isOpen={!!serverError}
+        onClose={handleToastClose}
+      />
       <Stack
         component="form"
         noValidate
-        justifyContent="center"
-        paddingTop={15}
         onSubmit={handleSubmitForPassword}
+        spacing={2}
       >
-        <Typography component="h1" variant="h2" marginBottom={2}>
-          Sign in
-        </Typography>
-        {getComponentsFromErrors()}
+        <PageTitle>Sign in</PageTitle>
         {/* Stays here until toasts are added*/}
-        <StyledTextField
+        <TextField
           label="Email"
           variant="outlined"
           required
@@ -127,8 +132,10 @@ const SignIn = () => {
           type="email"
           value={input.email}
           onChange={handleChange}
+          error={!!errors.email}
+          helperText={errors.email}
         />
-        <StyledTextField
+        <TextField
           label="Password"
           variant="outlined"
           required
@@ -136,8 +143,10 @@ const SignIn = () => {
           name="password"
           value={input.password}
           onChange={handleChange}
+          error={!!errors.password}
+          helperText={errors.password}
         />
-        <Stack spacing={2} marginTop={4} direction="row">
+        <FormButtons>
           <Button variant="contained" type="submit">
             Sign in
           </Button>
@@ -148,7 +157,7 @@ const SignIn = () => {
           >
             Sign in with Google
           </Button>
-        </Stack>
+        </FormButtons>
       </Stack>
     </StyledContainer>
   );

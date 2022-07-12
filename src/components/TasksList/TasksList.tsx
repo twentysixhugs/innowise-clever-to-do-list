@@ -1,4 +1,3 @@
-import { Container } from "@mui/system";
 import { Stack, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +5,10 @@ import { format } from "date-fns";
 import { enUS } from "date-fns/locale";
 import { TaskEntry } from "../TaskEntry/TaskEntry";
 import { useTasks } from "../../context/TasksStore/TasksStore";
-import { StyledContainer, StyledIconButton } from "./TasksList.styles";
+import { StyledIconButton } from "./TasksList.styles";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
+import { StyledContainer } from "../styled/StyledContainer";
+import { PageTitle } from "../styled/PageTitle";
 
 export const TasksList = () => {
   const navigate = useNavigate();
@@ -32,16 +33,20 @@ export const TasksList = () => {
     return `on ${format(selectedDate, "PP", { locale: enUS })}`;
   };
 
+  const showCreateButton = selectedDay >= new Date().getDate();
+
   return (
     <StyledContainer>
-      <Stack spacing={3} paddingTop={15} paddingBottom={10}>
+      <Stack spacing={3}>
         <Stack spacing={3} direction="row" alignItems="center">
-          <Typography component="h1" variant="h2">
+          <PageTitle>
             {tasks.length} tasks {getTitleDate()}
-          </Typography>
-          <StyledIconButton onClick={handleTaskCreate}>
-            <Add fontSize="large" />
-          </StyledIconButton>
+          </PageTitle>
+          {showCreateButton && (
+            <StyledIconButton onClick={handleTaskCreate}>
+              <Add fontSize="large" />
+            </StyledIconButton>
+          )}
         </Stack>
 
         {tasks.map(({ name, description, isCompleted, id }) => (

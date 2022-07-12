@@ -1,4 +1,4 @@
-import { db } from "../../firebase";
+import { db } from "../../init/firebase";
 import { collection } from "firebase/firestore";
 
 export abstract class DatabaseService {
