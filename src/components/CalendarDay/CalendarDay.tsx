@@ -18,7 +18,13 @@ export const CalendarDay = React.forwardRef<HTMLDivElement, CalendarDayProps>(
     ref
   ) => {
     return (
-      <Stack alignItems="center" padding={1} spacing={1} ref={ref}>
+      <Stack
+        alignItems="center"
+        padding={1}
+        spacing={1}
+        ref={ref}
+        draggable={false}
+      >
         <StyledPaper onClick={onClick} isSelected={isSelected} isPast={isPast}>
           <Typography>{dayOfWeek}</Typography>
           <Typography>{dayOfMonth}</Typography>

@@ -37,6 +37,8 @@ export const Calendar = () => {
   const SPACING = 3;
 
   const handleMouseDrag: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+
     if (e.buttons === 1) {
       isDragging.current = true;
 
@@ -66,14 +68,18 @@ export const Calendar = () => {
   };
 
   const handleMouseUp: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+
     setTimeout(() => {
       isDragging.current = false;
     }, 0);
   };
 
   const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = (e) => {
-    setTimeout(() => {}, 0);
-    isDragging.current = false;
+    setTimeout(() => {
+      isDragging.current = false;
+    }, 0);
+
     previousTouch.current = undefined;
   };
 
@@ -135,7 +141,7 @@ export const Calendar = () => {
 
   useEffect(() => {
     const config = {
-      root: null,
+      root: document.body,
       threshold: 1,
     };
 
@@ -201,7 +207,9 @@ export const Calendar = () => {
       onTouchEnd={handleTouchEnd}
       sx={{
         transition: "transform 0.1s",
+        userSelect: "none",
       }}
+      draggable={false}
     >
       <InvisibleElement ref={leftInvisibleElement} />
       {days.map(
