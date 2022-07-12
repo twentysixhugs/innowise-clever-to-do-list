@@ -9,3 +9,8 @@ export type Day = {
   hasCompletedTasks: boolean;
   hasNotCompletedTasks: boolean;
 };
+
+export type CalendarProps = {
+  wasAutoscrollOnFirstRenderMade: boolean;
+  onAutoscrollOnFirstRender: () => void;
+};
