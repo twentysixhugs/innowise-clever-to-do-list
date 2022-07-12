@@ -1,31 +1,39 @@
 import { Circle, CircleOutlined, CircleTwoTone } from "@mui/icons-material";
 import { Stack, Typography } from "@mui/material";
+import React, { useEffect } from "react";
 import { StyledPaper } from "./CalendarDay.styles";
 import { CalendarDayProps } from "./CalendarDay.types";
 
-export const CalendarDay = ({
-  dayOfMonth,
-  dayOfWeek,
-  hasCompletedTasks,
-  hasNotCompletedTasks,
-  isSelected,
-  isPast,
-  onClick,
-}: CalendarDayProps) => {
-  return (
-    <Stack alignItems="center" padding={1} spacing={1}>
-      <StyledPaper onClick={onClick} isSelected={isSelected} isPast={isPast}>
-        <Typography>{dayOfWeek}</Typography>
-        <Typography>{dayOfMonth}</Typography>
-      </StyledPaper>
-      <Stack spacing={2} direction="row">
-        {hasCompletedTasks && (
-          <CircleTwoTone color="warning" sx={{ fontSize: "0.5rem" }} />
-        )}
-        {hasNotCompletedTasks && (
-          <Circle color="warning" sx={{ fontSize: "0.5rem" }} />
-        )}
+export const CalendarDay = React.forwardRef<HTMLDivElement, CalendarDayProps>(
+  (
+    {
+      dayOfMonth,
+      dayOfWeek,
+      hasCompletedTasks,
+      hasNotCompletedTasks,
+      isSelected,
+      isPast,
+      onClick,
+    },
+    ref
+  ) => {
+    return (
+      <Stack alignItems="center" padding={1} spacing={1} ref={ref}>
+        <StyledPaper onClick={onClick} isSelected={isSelected} isPast={isPast}>
+          <Typography>{dayOfWeek}</Typography>
+          <Typography>{dayOfMonth}</Typography>
+        </StyledPaper>
+        <Stack spacing={2} direction="row">
+          {hasCompletedTasks && (
+            <CircleTwoTone color="warning" sx={{ fontSize: "0.5rem" }} />
+          )}
+          {hasNotCompletedTasks && (
+            <Circle color="warning" sx={{ fontSize: "0.5rem" }} />
+          )}
+        </Stack>
       </Stack>
-    </Stack>
-  );
-};
+    );
+  }
+);
+
+CalendarDay.displayName = "CalendarDay";

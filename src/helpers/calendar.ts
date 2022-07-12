@@ -18,14 +18,8 @@ export function getCurrentYear() {
   return currentDate.getFullYear();
 }
 
-export function getLastDayInMonthNumber() {
-  const currentDate = new Date();
-
-  const lastDayInMonthDate = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() + 1,
-    0
-  );
+export function getLastDayInMonth(month: number, year: number) {
+  const lastDayInMonthDate = new Date(year, month + 1, 0);
 
   return lastDayInMonthDate.getDate();
 }
