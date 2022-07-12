@@ -2,14 +2,21 @@ import { Stack, useTheme } from "@mui/material";
 import React, { Ref, useCallback, useEffect, useRef, useState } from "react";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 import { getLastDayInMonth } from "../../helpers/calendar";
+import { usePrevious } from "../../hooks/usePrevious";
 
 import { CalendarDay } from "../CalendarDay";
+import { CalendarProps } from "./Calendar.types";
 import { InvisibleElement } from "./InvisibleElement";
 import { useDays } from "./useDays";
 
-export const Calendar = () => {
+export const Calendar = ({
+  wasAutoscrollOnFirstRenderMade,
+  onAutoscrollOnFirstRender,
+}: CalendarProps) => {
   const { updateSelectedDate, selectedDay, selectedMonth, selectedYear } =
     useSelectedDate();
+
+  const previousSelectedMonth = usePrevious(selectedMonth);
 
   const days = useDays(selectedDay, selectedMonth, selectedYear);
 
@@ -24,8 +31,13 @@ export const Calendar = () => {
   const rightInvisibleElement = useRef<HTMLDivElement>(null);
 
   // needed for auto-scroll to today on mount
-  const [firstCalendarDayNode, setFirstCalendarDayNode] =
-    useState<HTMLDivElement | null>(null);
+  const [calendarDayNodeWidth, setCalendarDayNodeWidth] = useState(0);
+
+  const firstCalendarDayRef = useCallback((node: HTMLDivElement | null) => {
+    if (node !== null) {
+      setCalendarDayNodeWidth(node.offsetWidth);
+    }
+  }, []);
 
   // store spacing between calendar day nodes,
   // because it's necessary for calculating auto-scroll on mount
@@ -95,12 +107,52 @@ export const Calendar = () => {
     };
   };
 
+  /* Auto-scroll */
+
+  const scrollToDay = useCallback(
+    (scrollMultiplier = 0) => {
+      if (leftInvisibleElement.current && calendarDayNodeWidth) {
+        // get the width of left invisible element
+        const invisibleElementWidth = leftInvisibleElement.current.offsetWidth;
+
+        // get spacing between days
+        const spacingPX = parseInt(theme.spacing(SPACING));
+
+        // calculate scroll which is performed on first render
+        // that is, it should scroll to today
+        // so, if today is 16, it scrolls to this day
+
+        // perform scroll
+        const scrollTo =
+          (calendarDayNodeWidth + spacingPX) * scrollMultiplier +
+          invisibleElementWidth;
+
+        currentMovement.current -= scrollTo;
+        slider.current!.style.transform = `translateX(${currentMovement.current}px)`;
+
+        return true;
+      } else {
+        return false;
+      }
+    },
+    [theme, calendarDayNodeWidth]
+  );
+
+  const scrollFromObserver = useCallback(() => {
+    if (leftInvisibleElement.current) {
+      const scrollTo = leftInvisibleElement.current.offsetWidth;
+
+      currentMovement.current -= scrollTo;
+      slider.current!.style.transform = `translateX(${currentMovement.current}px)`;
+    }
+  }, []);
+
   const handleScrollToEndObserver = useCallback<IntersectionObserverCallback>(
     (entries) => {
-      console.log(entries);
       const target = entries[0];
 
       if (target.isIntersecting) {
+        console.log(selectedMonth);
         if (selectedMonth === 11) {
           updateSelectedDate("month", 0);
           updateSelectedDate("year", selectedYear + 1);
@@ -118,26 +170,60 @@ export const Calendar = () => {
 
   const handleScrollToStartObserver = useCallback<IntersectionObserverCallback>(
     (entries) => {
-      console.log(entries);
       const target = entries[0];
-
       if (target.isIntersecting) {
         if (selectedMonth === 0) {
           updateSelectedDate("month", 11);
           updateSelectedDate("year", selectedYear - 1);
-          updateSelectedDate("day", getLastDayInMonth(11, selectedYear - 1));
         } else {
           updateSelectedDate("month", selectedMonth - 1);
           updateSelectedDate("year", selectedYear);
-          updateSelectedDate(
-            "day",
-            getLastDayInMonth(selectedMonth - 1, selectedYear)
-          );
         }
+        updateSelectedDate("day", 1);
       }
     },
     [selectedMonth, selectedYear, updateSelectedDate]
   );
+
+  useEffect(() => {
+    if (!wasAutoscrollOnFirstRenderMade) {
+      console.log("called");
+      let wasScrolled = false;
+
+      const currentDate = new Date();
+      const today = currentDate.getDate();
+      const currentMonth = currentDate.getMonth();
+      // Needed to prevent unstoppable infinite scroll after specific date
+      // In other words, it may auto-scroll so much that it opens the next month
+      // So, if date is bigger than 17, it won't scroll further
+      if (currentMonth !== 1 && today >= 19) {
+        wasScrolled = scrollToDay(18);
+      } else if (currentMonth === 1 && today >= 14) {
+        // if it's february
+        wasScrolled = scrollToDay(14);
+      } else {
+        wasScrolled = scrollToDay(today - 1);
+      }
+
+      if (wasScrolled) {
+        onAutoscrollOnFirstRender();
+      }
+    }
+  }, [scrollToDay, wasAutoscrollOnFirstRenderMade, onAutoscrollOnFirstRender]);
+
+  useEffect(() => {
+    if (
+      wasAutoscrollOnFirstRenderMade &&
+      selectedMonth !== previousSelectedMonth
+    ) {
+      scrollFromObserver();
+    }
+  }, [
+    scrollFromObserver,
+    wasAutoscrollOnFirstRenderMade,
+    selectedMonth,
+    previousSelectedMonth,
+  ]);
 
   useEffect(() => {
     const config = {
@@ -155,46 +241,39 @@ export const Calendar = () => {
       config
     );
 
-    if (leftInvisibleElement.current && firstCalendarDayNode) {
-      // get the width of left invisible element
-      const invisibeElementWidth = leftInvisibleElement.current.offsetWidth;
+    // It uses setTimeout because otherwise autoscroll doesn't have time
+    // to scroll and observer callback is immediately invoked
+    setTimeout(() => {
+      leftInvisibleElement.current &&
+        startObserver.observe(leftInvisibleElement.current);
 
-      // get the width of CalendarDay element
-      const dayWidth = firstCalendarDayNode.offsetWidth;
+      rightInvisibleElement.current &&
+        endObserver.observe(rightInvisibleElement.current);
+    }, 200);
 
-      // get spacing between days
-      const spacingPX = parseInt(theme.spacing(SPACING));
+    return () => {
+      startObserver.disconnect();
+      endObserver.disconnect();
+    };
+  }, [handleScrollToEndObserver, handleScrollToStartObserver]);
 
-      // calculate scroll which is performed on first render
-      // that is, it should scroll to today
-      // so, if today is 16, it scrolls to this day
-      const scrollTo =
-        (dayWidth + spacingPX) * (new Date().getDate() - 1) +
-        invisibeElementWidth;
+  function isDayPast(day: number) {
+    const dayDate = new Date(selectedYear, selectedMonth, day);
 
-      // perform scroll
-      currentMovement.current -= scrollTo;
-      slider.current!.style.transform = `translateX(${currentMovement.current}px)`;
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
 
-      // after all operations are completed, attach observer to left invisible
-      // element.
-      // It uses setTimeout because otherwise autoscroll doesn't have time
-      // to scroll and observer callback is immediately invoked
-      setTimeout(() => {
-        leftInvisibleElement.current &&
-          startObserver.observe(leftInvisibleElement.current);
-      }, 300);
-    }
+    return dayDate.getTime() < currentDate.getTime();
+  }
 
-    if (rightInvisibleElement.current) {
-      endObserver.observe(rightInvisibleElement.current);
-    }
-  }, [
-    handleScrollToEndObserver,
-    handleScrollToStartObserver,
-    firstCalendarDayNode,
-    theme,
-  ]);
+  function isDayToday(day: number) {
+    const dayDate = new Date(selectedYear, selectedMonth, day);
+
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    return dayDate.getTime() === currentDate.getTime();
+  }
 
   return (
     <Stack
@@ -226,14 +305,15 @@ export const Calendar = () => {
           i === 0 ? (
             <CalendarDay
               key={day}
-              ref={setFirstCalendarDayNode}
+              ref={firstCalendarDayRef}
               onClick={handleSelectedDayChange(day)}
               dayOfMonth={day}
               dayOfWeek={dayOfWeek}
               hasCompletedTasks={hasCompletedTasks}
               hasNotCompletedTasks={hasNotCompletedTasks}
               isSelected={isSelected}
-              isPast={day < new Date().getDate()}
+              isPast={isDayPast(day)}
+              isToday={isDayToday(day)}
             />
           ) : (
             <CalendarDay
@@ -244,7 +324,8 @@ export const Calendar = () => {
               hasCompletedTasks={hasCompletedTasks}
               hasNotCompletedTasks={hasNotCompletedTasks}
               isSelected={isSelected}
-              isPast={day < new Date().getDate()}
+              isPast={isDayPast(day)}
+              isToday={isDayToday(day)}
             />
           )
       )}

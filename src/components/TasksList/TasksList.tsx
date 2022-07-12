@@ -23,17 +23,20 @@ export const TasksList = () => {
 
   const tasks = getTasksByDate(selectedYear, selectedMonth, selectedDay);
 
+  const selectedDate = new Date(selectedYear, selectedMonth, selectedDay);
+
   const getTitleDate = () => {
     if (selectedDay === new Date().getDate()) {
       return "today";
     }
 
-    const selectedDate = new Date(selectedYear, selectedMonth, selectedDay);
-
     return `on ${format(selectedDate, "PP", { locale: enUS })}`;
   };
 
-  const showCreateButton = selectedDay >= new Date().getDate();
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
+  const showCreateButton = selectedDate.getTime() >= currentDate.getTime();
 
   return (
     <StyledContainer>
