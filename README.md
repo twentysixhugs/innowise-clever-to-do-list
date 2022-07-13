@@ -19,6 +19,12 @@
 - Add a hook, e.g. `npx husky add .husky/pre-commit "npm lint"` (Will run `npm test` before making a commit)
 - For more information, visit [husky npm page](https://www.npmjs.com/package/husky)
 
+### Application stack
+- React, React Router
+- Firebase
+- TypeScript
+- MUI
+
 ### Database snapshot
 - Tasks are stored in Firestore inside **tasks** collection as an array of documents.
 - Each task has the following structure:
@@ -39,9 +45,3 @@
 - In `src/services`, there are classes for creating db services and their instances that proxy interaction with DB.
 - Custom hooks used across the app can be found in `src/hooks`
 - `src/init` contains functions that must be called before app is rendered, i.e. in `index.ts` file.
-
-### Application stack
-- React, React Router
-- Firebase
-- TypeScript
-- MUI
