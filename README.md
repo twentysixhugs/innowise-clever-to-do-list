@@ -1,8 +1,8 @@
 # innowise-clever-to-do-list
 
 ### Task
-[Requirements](https://docs.google.com/document/d/1heFuihWrsw14bCpUdr6fla9ysqE6IrsobSMKAOpBiKA)
-[Deployment](https://todo-twentysixhugs.netlify.app/)
+- [Requirements](https://docs.google.com/document/d/1heFuihWrsw14bCpUdr6fla9ysqE6IrsobSMKAOpBiKA)
+- [Deployment](https://todo-twentysixhugs.netlify.app/)
 
 ### How to run the app
 1. Clone the repository on your local machine
