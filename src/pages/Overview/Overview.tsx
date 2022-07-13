@@ -100,6 +100,10 @@ const Overview = () => {
     setWasAutoscrollOnFirstRenderMade(true);
   }, []);
 
+  useEffect(() => {
+    scrollTo(0, 0);
+  }, []);
+
   if (isLoading) {
     return <Loader />;
   }
