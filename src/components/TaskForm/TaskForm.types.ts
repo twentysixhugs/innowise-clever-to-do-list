@@ -7,10 +7,10 @@ export type TaskFormProps = {
   submitButtonText: string;
   cancelButtonText: string;
   title: string;
+  navigate: () => void;
 };
 
 export type TaskFormState = {
   input: ITaskInput;
   errors: { [K in keyof ITaskInput]: FormError | "" };
-  navigateTo: string | number | null;
 };
