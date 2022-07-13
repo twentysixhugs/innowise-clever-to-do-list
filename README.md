@@ -39,3 +39,9 @@
 - In `src/services`, there are classes for creating db services and their instances that proxy interaction with DB.
 - Custom hooks used across the app can be found in `src/hooks`
 - `src/init` contains functions that must be called before app is rendered, i.e. in `index.ts` file.
+
+### Application stack
+- React, React Router
+- Firebase
+- TypeScript
+- MUI
