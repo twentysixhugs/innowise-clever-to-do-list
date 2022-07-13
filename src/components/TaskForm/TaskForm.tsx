@@ -10,8 +10,9 @@ import { validateTaskName } from "../../validation/validateTaskName";
 import { SelectedDateContext } from "../../context/SelectedDateStore/SelectedDateStore";
 import { StyledContainer } from "../styled/StyledContainer";
 import { PageTitle } from "../styled/PageTitle";
+import { withNavigate } from "../withNavigate";
 
-export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
+class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
   static contextType = SelectedDateContext;
   context: React.ContextType<typeof SelectedDateContext> | undefined;
 
@@ -26,7 +27,6 @@ export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
       description: "",
       date: "",
     },
-    navigateTo: null,
   };
 
   componentDidMount() {
@@ -85,13 +85,9 @@ export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
   };
 
   render() {
-    const { navigateTo, input, errors } = this.state;
+    const { input, errors } = this.state;
 
-    const { title, cancelButtonText, submitButtonText } = this.props;
-
-    if (navigateTo) {
-      return <Navigate to={`${navigateTo}`} />;
-    }
+    const { title, cancelButtonText, submitButtonText, navigate } = this.props;
 
     return (
       <StyledContainer>
@@ -133,12 +129,7 @@ export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
             <Button variant="contained" type="submit">
               {submitButtonText}
             </Button>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                this.setState({ navigateTo: "/" });
-              }}
-            >
+            <Button variant="outlined" onClick={navigate}>
               {cancelButtonText}
             </Button>
           </Stack>
@@ -147,3 +138,7 @@ export class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
     );
   }
 }
+
+const TaskFormWithNavigate = withNavigate(TaskForm, { delta: -1 });
+
+export { TaskFormWithNavigate as TaskForm };

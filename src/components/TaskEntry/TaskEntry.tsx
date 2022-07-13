@@ -84,10 +84,6 @@ export const TaskEntry = ({
     navigate(`/edit/${id}`);
   };
 
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
-
   return (
     <>
       <Toast

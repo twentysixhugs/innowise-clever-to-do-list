@@ -45,8 +45,6 @@ export class SelectedDateStore extends React.Component<
       [`selected${part[0].toUpperCase() + part.slice(1)}`]: newValue,
     } as SelectedDateStoreState;
 
-    console.log(newState);
-
     this.setState(newState);
   };
 
