@@ -22,34 +22,6 @@ const Overview = () => {
   const wasRequestOnFirstRenderMade = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!tasks.length) {
-      taskService
-        .getAllForUser()
-        .then((tasksData) => {
-          const processedTasksData = tasksData.map(
-            ({ name, description, timestamp, isCompleted, id }) => {
-              return {
-                name,
-                description,
-                date: timestamp.toDate(),
-                isCompleted,
-                id,
-              };
-            }
-          );
-
-          appendTasks(processedTasksData);
-        })
-        .finally(() => {
-          setIsLoading(false);
-          wasRequestOnFirstRenderMade.current = true;
-        });
-    } else {
-      setIsLoading(false);
-    }
-  }, [appendTasks, tasks]);
-
-  useEffect(() => {
     if (
       previousSelectedMonth === undefined ||
       previousSelectedYear === undefined
@@ -60,9 +32,7 @@ const Overview = () => {
       selectedMonth !== previousSelectedMonth ||
       selectedYear !== previousSelectedYear
     ) {
-      // reset tasks and query new ones for the new date
       resetTasks();
-
       setIsLoading(true);
 
       taskService
@@ -95,6 +65,34 @@ const Overview = () => {
     resetTasks,
     appendTasks,
   ]);
+
+  useEffect(() => {
+    if (!tasks.length && !wasRequestOnFirstRenderMade.current) {
+      taskService
+        .getAllForUser()
+        .then((tasksData) => {
+          const processedTasksData = tasksData.map(
+            ({ name, description, timestamp, isCompleted, id }) => {
+              return {
+                name,
+                description,
+                date: timestamp.toDate(),
+                isCompleted,
+                id,
+              };
+            }
+          );
+
+          appendTasks(processedTasksData);
+        })
+        .finally(() => {
+          setIsLoading(false);
+          wasRequestOnFirstRenderMade.current = true;
+        });
+    } else {
+      setIsLoading(false);
+    }
+  }, [appendTasks, tasks]);
 
   const handleAutoscrollOnFirstRender = useCallback(() => {
     setWasAutoscrollOnFirstRenderMade(true);
