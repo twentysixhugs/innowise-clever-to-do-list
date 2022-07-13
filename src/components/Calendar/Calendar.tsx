@@ -152,7 +152,6 @@ export const Calendar = ({
       const target = entries[0];
 
       if (target.isIntersecting) {
-        console.log(selectedMonth);
         if (selectedMonth === 11) {
           updateSelectedDate("month", 0);
           updateSelectedDate("year", selectedYear + 1);
@@ -187,7 +186,6 @@ export const Calendar = ({
 
   useEffect(() => {
     if (!wasAutoscrollOnFirstRenderMade) {
-      console.log("called");
       let wasScrolled = false;
 
       const currentDate = new Date();
