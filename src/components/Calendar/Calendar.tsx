@@ -147,38 +147,33 @@ export const Calendar = ({
     }
   }, []);
 
-  const handleScrollToEndObserver = useCallback<IntersectionObserverCallback>(
+  const handleIntersectionObserver = useCallback<IntersectionObserverCallback>(
     (entries) => {
-      const target = entries[0];
+      const entry = entries[0];
 
-      if (target.isIntersecting) {
-        if (selectedMonth === 11) {
-          updateSelectedDate("month", 0);
-          updateSelectedDate("year", selectedYear + 1);
-        } else {
-          updateSelectedDate("month", selectedMonth + 1);
-          updateSelectedDate("year", selectedYear);
+      if (entry.isIntersecting) {
+        if (entry.target.id === "invisible-left") {
+          if (selectedMonth === 0) {
+            updateSelectedDate("month", 11);
+            updateSelectedDate("year", selectedYear - 1);
+          } else {
+            updateSelectedDate("month", selectedMonth - 1);
+            updateSelectedDate("year", selectedYear);
+          }
+          updateSelectedDate("day", 1);
         }
 
-        updateSelectedDate("day", 1);
-      }
-    },
+        if (entry.target.id === "invisible-right") {
+          if (selectedMonth === 11) {
+            updateSelectedDate("month", 0);
+            updateSelectedDate("year", selectedYear + 1);
+          } else {
+            updateSelectedDate("month", selectedMonth + 1);
+            updateSelectedDate("year", selectedYear);
+          }
 
-    [selectedMonth, selectedYear, updateSelectedDate]
-  );
-
-  const handleScrollToStartObserver = useCallback<IntersectionObserverCallback>(
-    (entries) => {
-      const target = entries[0];
-      if (target.isIntersecting) {
-        if (selectedMonth === 0) {
-          updateSelectedDate("month", 11);
-          updateSelectedDate("year", selectedYear - 1);
-        } else {
-          updateSelectedDate("month", selectedMonth - 1);
-          updateSelectedDate("year", selectedYear);
+          updateSelectedDate("day", 1);
         }
-        updateSelectedDate("day", 1);
       }
     },
     [selectedMonth, selectedYear, updateSelectedDate]
@@ -229,13 +224,8 @@ export const Calendar = ({
       threshold: 1,
     };
 
-    const startObserver = new IntersectionObserver(
-      handleScrollToStartObserver,
-      config
-    );
-
-    const endObserver = new IntersectionObserver(
-      handleScrollToEndObserver,
+    const observer = new IntersectionObserver(
+      handleIntersectionObserver,
       config
     );
 
@@ -243,17 +233,17 @@ export const Calendar = ({
     // to scroll and observer callback is immediately invoked
     setTimeout(() => {
       leftInvisibleElement.current &&
-        startObserver.observe(leftInvisibleElement.current);
+        observer.observe(leftInvisibleElement.current);
 
       rightInvisibleElement.current &&
-        endObserver.observe(rightInvisibleElement.current);
+        observer.observe(rightInvisibleElement.current);
     }, 200);
 
     return () => {
-      startObserver.disconnect();
-      endObserver.disconnect();
+      observer.disconnect();
+      observer.disconnect();
     };
-  }, [handleScrollToEndObserver, handleScrollToStartObserver]);
+  }, [handleIntersectionObserver]);
 
   function isDayPast(day: number) {
     const dayDate = new Date(selectedYear, selectedMonth, day);
@@ -288,7 +278,7 @@ export const Calendar = ({
       }}
       draggable={false}
     >
-      <InvisibleElement ref={leftInvisibleElement} />
+      <InvisibleElement ref={leftInvisibleElement} id="invisible-left" />
       {days.map(
         (
           {
@@ -328,7 +318,7 @@ export const Calendar = ({
           )
       )}
 
-      <InvisibleElement ref={rightInvisibleElement} />
+      <InvisibleElement ref={rightInvisibleElement} id="invisible-right" />
     </Stack>
   );
 };

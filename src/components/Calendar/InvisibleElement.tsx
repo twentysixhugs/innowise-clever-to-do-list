@@ -1,11 +1,14 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-export const InvisibleElement = React.forwardRef<HTMLDivElement>(
-  (props, ref) => {
-    return <StyledInvisibleElement ref={ref}></StyledInvisibleElement>;
-  }
-);
+export const InvisibleElement = React.forwardRef<
+  HTMLDivElement,
+  { id: string }
+>((props, ref) => {
+  return (
+    <StyledInvisibleElement id={props.id} ref={ref}></StyledInvisibleElement>
+  );
+});
 
 InvisibleElement.displayName = "InvisibleElement";
 
