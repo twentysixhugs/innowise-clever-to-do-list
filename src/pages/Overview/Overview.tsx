@@ -22,6 +22,35 @@ const Overview = () => {
   const wasRequestOnFirstRenderMade = useRef<boolean>(false);
 
   useEffect(() => {
+    if (!tasks.length && !wasRequestOnFirstRenderMade.current) {
+      taskService
+        .getAllForUser()
+        .then((tasksData) => {
+          const processedTasksData = tasksData.map(
+            ({ name, description, timestamp, isCompleted, id }) => {
+              return {
+                name,
+                description,
+                date: timestamp.toDate(),
+                isCompleted,
+                id,
+              };
+            }
+          );
+
+          console.log("called 87");
+          appendTasks(processedTasksData);
+        })
+        .finally(() => {
+          setIsLoading(false);
+          wasRequestOnFirstRenderMade.current = true;
+        });
+    } else {
+      setIsLoading(false);
+    }
+  }, [appendTasks, tasks]);
+
+  useEffect(() => {
     if (
       previousSelectedMonth === undefined ||
       previousSelectedYear === undefined
@@ -32,7 +61,6 @@ const Overview = () => {
       selectedMonth !== previousSelectedMonth ||
       selectedYear !== previousSelectedYear
     ) {
-      resetTasks();
       setIsLoading(true);
 
       taskService
@@ -50,6 +78,8 @@ const Overview = () => {
             }
           );
 
+          console.log("called 53");
+          resetTasks();
           appendTasks(processedTasksData);
         })
         .finally(() => {
@@ -66,34 +96,6 @@ const Overview = () => {
     appendTasks,
   ]);
 
-  useEffect(() => {
-    if (!tasks.length && !wasRequestOnFirstRenderMade.current) {
-      taskService
-        .getAllForUser()
-        .then((tasksData) => {
-          const processedTasksData = tasksData.map(
-            ({ name, description, timestamp, isCompleted, id }) => {
-              return {
-                name,
-                description,
-                date: timestamp.toDate(),
-                isCompleted,
-                id,
-              };
-            }
-          );
-
-          appendTasks(processedTasksData);
-        })
-        .finally(() => {
-          setIsLoading(false);
-          wasRequestOnFirstRenderMade.current = true;
-        });
-    } else {
-      setIsLoading(false);
-    }
-  }, [appendTasks, tasks]);
-
   const handleAutoscrollOnFirstRender = useCallback(() => {
     setWasAutoscrollOnFirstRenderMade(true);
   }, []);
@@ -102,17 +104,13 @@ const Overview = () => {
     scrollTo(0, 0);
   }, []);
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
     <>
       <Calendar
         wasAutoscrollOnFirstRenderMade={wasAutoscrollOnFirstRenderMade}
         onAutoscrollOnFirstRender={handleAutoscrollOnFirstRender}
       />
-      <TasksList />
+      {isLoading ? <Loader /> : <TasksList />}
     </>
   );
 };

@@ -23,6 +23,7 @@ export const CalendarDay = React.forwardRef<HTMLDivElement, CalendarDayProps>(
         alignItems="center"
         padding={1}
         spacing={1}
+        marginLeft={3}
         ref={ref}
         draggable={false}
       >

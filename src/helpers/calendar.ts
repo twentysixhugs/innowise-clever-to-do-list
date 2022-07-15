@@ -27,3 +27,16 @@ export function getLastDayInMonth(month: number, year: number) {
 export function getDayOfWeek(year: number, month: number, day: number) {
   return new Date(year, month, day).getDay() as keyof typeof DayOfWeek;
 }
+
+export function getDatesArray(start: Date, end: Date) {
+  const arr: Date[] = [];
+
+  const dt = new Date(start);
+
+  while (dt <= new Date(end)) {
+    arr.push(new Date(dt));
+    dt.setDate(dt.getDate() + 1);
+  }
+
+  return arr;
+}
