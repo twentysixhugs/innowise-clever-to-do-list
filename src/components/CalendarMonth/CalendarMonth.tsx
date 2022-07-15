@@ -8,40 +8,6 @@ import { Day } from "../Calendar/Calendar.types";
 import { CalendarDay } from "../CalendarDay";
 import { CalendarMonthProps } from "./CalendarMonth.types";
 
-const cards = [
-  "noth1",
-  "going2",
-  "with3",
-  "thying4",
-  "someday5",
-  "noth6",
-  "going7",
-  "with8",
-  "thying9",
-  "someday10",
-  "noth11",
-  "going12",
-  "with13",
-  "thying14",
-  "someday15",
-  "noth16",
-  "going17",
-  "with18",
-  "thying19",
-  "someday20",
-  "noth-0",
-  "going-00",
-  "with-000",
-  "thying-0000",
-  "someday-00000",
-  "noth-09999",
-  "going-0909090",
-  "with-7-7-7",
-  "thying7j7",
-  "somedayjht",
-  "someday4442",
-];
-
 export const CalendarMonth = React.memo(
   ({ mountCallback, year, month }: CalendarMonthProps) => {
     const { selectedDay, selectedMonth, selectedYear, updateSelectedDate } =
@@ -78,18 +44,13 @@ export const CalendarMonth = React.memo(
             <CalendarDay
               key={`${year}-${month + 1}-${i + 1}`}
               dayOfMonth={i + 1}
-              dayOfWeek={DayOfWeek[getDayOfWeek(year, month, i)]}
-              hasCompletedTasks={hasTasksForDate(
-                "completed",
-                year,
-                month,
-                i + 1
-              )}
+              dayOfWeek={DayOfWeek[getDayOfWeek(year, month, i - 1)]}
+              hasCompletedTasks={hasTasksForDate("completed", year, month, i)}
               hasNotCompletedTasks={hasTasksForDate(
                 "not completed",
                 year,
                 month,
-                i + 1
+                i
               )}
               isPast={isDayPast(year, month, i)}
               isToday={isDayToday(year, month, i)}
