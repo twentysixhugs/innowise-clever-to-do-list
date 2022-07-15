@@ -34,11 +34,19 @@ export const Calendar = ({
   const SPACING = 3;
 
   useEffect(() => {
+    let id: number;
+
     const animate = () => {
-      requestAnimationFrame(animate);
-      slider.current!.style.left = `${currentMovement.current}px`;
+      id = requestAnimationFrame(animate);
+      if (slider.current) {
+        slider.current.style.left = `${currentMovement.current}px`;
+      }
     };
     animate();
+
+    return () => {
+      cancelAnimationFrame(id);
+    };
   }, []);
 
   const mountCallback = useCallback(
