@@ -1,6 +1,6 @@
 class Observer {
   private entries: {
-    [elementId: string]: (nodeId: number) => void;
+    [elementId: string]: (id: [year: number, month: number]) => void;
   };
 
   private observedElements: Element[] = [];
@@ -19,19 +19,17 @@ class Observer {
     };
     this.observer = new IntersectionObserver(this.onIntersection, config);
 
-    const resizeObserver = new ResizeObserver(this.changeWindowSize.bind(this));
+    const resizeObserver = new ResizeObserver(this.changeWindowSize);
 
     resizeObserver.observe(document.body);
   }
 
-  private changeWindowSize(entries: ResizeObserverEntry[]) {
+  private changeWindowSize = (entries: ResizeObserverEntry[]) => {
     if (!this.wasResizeObserverCalled) {
       this.wasResizeObserverCalled = true;
       return;
     }
     const lastEntry = entries[entries.length - 1];
-
-    console.log(lastEntry.target.clientWidth);
 
     const config = {
       threshold: (lastEntry.target.clientWidth * 0.4) / 1536,
@@ -39,18 +37,20 @@ class Observer {
     this.observer = new IntersectionObserver(this.onIntersection, config);
 
     this.observedElements.forEach((el) => this.observer.observe(el));
-  }
+  };
 
   private checkEntry = (entry: IntersectionObserverEntry) => {
     if (!entry.isIntersecting) {
-      const id = Number(entry.target.id);
+      const id = new Date(entry.target.id);
 
-      const callback = this.entries[id];
+      const callback = this.entries[entry.target.id];
 
       // x > 0 means we scroll to the left, otherwise to the right
-      const newId = entry.boundingClientRect.x > 0 ? id - 1 : id + 1;
+      entry.boundingClientRect.x > 0
+        ? id.setMonth(id.getMonth() - 1)
+        : id.setMonth(id.getMonth() + 1);
 
-      callback(newId);
+      callback([id.getFullYear(), id.getMonth()]);
     }
   };
 
@@ -58,7 +58,10 @@ class Observer {
     entries.forEach(this.checkEntry);
   };
 
-  public addEntry = (element: Element, callback: (nodeId: number) => void) => {
+  public addEntry = (
+    element: Element,
+    callback: (id: [year: number, month: number]) => void
+  ) => {
     this.entries[element.id] = callback;
     this.observer.observe(element);
     this.observedElements.push(element);

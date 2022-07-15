@@ -102,9 +102,9 @@ const Overview = () => {
     scrollTo(0, 0);
   }, []);
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return (
     <>
