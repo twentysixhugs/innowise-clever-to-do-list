@@ -51,17 +51,17 @@ export const CalendarMonth = React.memo(
                 month,
                 i
               )}
-              isPast={isDayPast(year, month, i)}
-              isToday={isDayToday(year, month, i)}
+              isPast={isDayPast(year, month, i + 1)}
+              isToday={isDayToday(year, month, i + 1)}
               isSelected={
-                i === selectedDay &&
+                i + 1 === selectedDay &&
                 month === selectedMonth &&
                 year === selectedYear
               }
               onClick={() => {
                 updateSelectedDate("year", year);
                 updateSelectedDate("month", month);
-                updateSelectedDate("day", i);
+                updateSelectedDate("day", i + 1);
               }}
             />
           )
