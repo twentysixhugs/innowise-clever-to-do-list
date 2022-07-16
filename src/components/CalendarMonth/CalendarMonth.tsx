@@ -1,10 +1,9 @@
 import { Stack } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { DayOfWeek } from "../../constants";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { getDayOfWeek, getLastDayInMonth } from "../../helpers/calendar";
-import { Day } from "../Calendar/Calendar.types";
 import { CalendarDay } from "../CalendarDay";
 import { CalendarMonthProps } from "./CalendarMonth.types";
 
