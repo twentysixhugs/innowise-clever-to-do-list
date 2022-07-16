@@ -130,7 +130,7 @@ export const Calendar = () => {
         // if it's february
         setCurrentMovement(11);
       } else {
-        setCurrentMovement(today);
+        setCurrentMovement(today - 1);
       }
 
       didScrollOnFirstRender = true;
