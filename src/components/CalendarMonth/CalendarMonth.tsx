@@ -44,12 +44,17 @@ export const CalendarMonth = React.memo(
               key={`${year}-${month + 1}-${i + 1}`}
               dayOfMonth={i + 1}
               dayOfWeek={DayOfWeek[getDayOfWeek(year, month, i - 1)]}
-              hasCompletedTasks={hasTasksForDate("completed", year, month, i)}
+              hasCompletedTasks={hasTasksForDate(
+                "completed",
+                year,
+                month,
+                i + 1
+              )}
               hasNotCompletedTasks={hasTasksForDate(
                 "not completed",
                 year,
                 month,
-                i
+                i + 1
               )}
               isPast={isDayPast(year, month, i + 1)}
               isToday={isDayToday(year, month, i + 1)}
