@@ -26,7 +26,15 @@ export const TasksList = () => {
   const selectedDate = new Date(selectedYear, selectedMonth, selectedDay);
 
   const getTitleDate = () => {
-    if (selectedDay === new Date().getDate()) {
+    const currentDay = new Date().getDate();
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+
+    if (
+      selectedDay === currentDay &&
+      selectedMonth === currentMonth &&
+      selectedYear === currentYear
+    ) {
       return "today";
     }
 
