@@ -2,7 +2,6 @@ import { TextField, Button } from "@mui/material";
 import { Stack } from "@mui/material";
 import React from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Navigate } from "react-router-dom";
 import { TaskFormProps, TaskFormState } from "./TaskForm.types";
 import { FormError } from "../../constants";
 import { validateTaskDate } from "../../validation/validateTaskDate";
@@ -129,7 +128,12 @@ class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
             <Button variant="contained" type="submit">
               {submitButtonText}
             </Button>
-            <Button variant="outlined" onClick={navigate}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                navigate("/");
+              }}
+            >
               {cancelButtonText}
             </Button>
           </Stack>
@@ -139,6 +143,6 @@ class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
   }
 }
 
-const TaskFormWithNavigate = withNavigate(TaskForm, { delta: -1 });
+const TaskFormWithNavigate = withNavigate(TaskForm);
 
 export { TaskFormWithNavigate as TaskForm };

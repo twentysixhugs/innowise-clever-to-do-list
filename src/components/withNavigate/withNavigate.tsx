@@ -3,8 +3,7 @@ import { NavigateOptions, To, useNavigate } from "react-router-dom";
 import { WithNavigateParams, WithNavigateProps } from "./withNavigate.types";
 
 export function withNavigate<T extends WithNavigateProps>(
-  WrappedComponent: React.ComponentType<T>,
-  navigateFunctionParams: WithNavigateParams
+  WrappedComponent: React.ComponentType<T>
 ) {
   const displayName =
     WrappedComponent.displayName ||
@@ -15,21 +14,9 @@ export function withNavigate<T extends WithNavigateProps>(
   const ComponentWithNavigate = (props: Omit<T, keyof WithNavigateProps>) => {
     const navigate = useNavigate();
 
-    const navigateFn = () => {
-      if ("to" in navigateFunctionParams) {
-        const { to, options } = navigateFunctionParams;
-
-        navigate(to, options);
-      } else if ("delta" in navigateFunctionParams) {
-        const { delta } = navigateFunctionParams;
-
-        navigate(delta);
-      }
-    };
-
     const extraProps: WithNavigateProps = {
       ...props,
-      navigate: navigateFn,
+      navigate,
     };
 
     return <WrappedComponent {...(extraProps as T)} />;
