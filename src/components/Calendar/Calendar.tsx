@@ -2,11 +2,12 @@ import { Stack, useTheme } from "@mui/material";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { CalendarMonth } from "../CalendarMonth";
-import { CalendarProps } from "./Calendar.types";
 import observer from "./observer";
 
 let currentMovement = 0;
 let previousTouch: React.Touch | undefined;
+
+let didScrollOnFirstRender = false;
 
 const calendarDayNodeWidth = 88;
 const SPACING = 3;
@@ -14,21 +15,11 @@ const SPACING = 3;
 const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth();
 
-export const Calendar = ({
-  wasAutoscrollOnFirstRenderMade,
-  onAutoscrollOnFirstRender,
-}: CalendarProps) => {
-  // dragging refs
-
+export const Calendar = () => {
   const [months, setMonths] = useState<[year: number, month: number][]>([
     [currentYear, currentMonth],
   ]);
 
-  // store spacing between calendar day nodes,
-  // because it's necessary for calculating auto-scroll on mount
-  // Theme is used to get the corresponding value in pixels.
-  // For example, parseInt(theme.spacing(3)) will give us the
-  // pixels we need for calculation
   const theme = useTheme();
 
   const slider = useRef<HTMLDivElement>();
@@ -127,7 +118,7 @@ export const Calendar = ({
   );
 
   useEffect(() => {
-    if (!wasAutoscrollOnFirstRenderMade) {
+    if (!didScrollOnFirstRender) {
       const currentDate = new Date();
       const today = currentDate.getDate();
       // Needed to prevent unstoppable infinite scroll after specific date
@@ -142,13 +133,9 @@ export const Calendar = ({
         setCurrentMovement(today);
       }
 
-      onAutoscrollOnFirstRender();
+      didScrollOnFirstRender = true;
     }
-  }, [
-    setCurrentMovement,
-    wasAutoscrollOnFirstRenderMade,
-    onAutoscrollOnFirstRender,
-  ]);
+  }, [setCurrentMovement]);
 
   return (
     <Stack

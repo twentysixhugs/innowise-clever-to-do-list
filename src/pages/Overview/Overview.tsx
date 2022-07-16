@@ -17,8 +17,6 @@ const Overview = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const [wasAutoscrollOnFirstRenderMade, setWasAutoscrollOnFirstRenderMade] =
-    useState(false);
   const wasRequestOnFirstRenderMade = useRef<boolean>(false);
 
   useEffect(() => {
@@ -38,7 +36,6 @@ const Overview = () => {
             }
           );
 
-          console.log("called 87");
           appendTasks(processedTasksData);
         })
         .finally(() => {
@@ -96,20 +93,13 @@ const Overview = () => {
     appendTasks,
   ]);
 
-  const handleAutoscrollOnFirstRender = useCallback(() => {
-    setWasAutoscrollOnFirstRenderMade(true);
-  }, []);
-
   useEffect(() => {
     scrollTo(0, 0);
   }, []);
 
   return (
     <>
-      <Calendar
-        wasAutoscrollOnFirstRenderMade={wasAutoscrollOnFirstRenderMade}
-        onAutoscrollOnFirstRender={handleAutoscrollOnFirstRender}
-      />
+      <Calendar />
       {isLoading ? <Loader /> : <TasksList />}
     </>
   );
