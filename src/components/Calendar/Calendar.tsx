@@ -2,36 +2,27 @@ import { Stack, useTheme } from "@mui/material";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { CalendarMonth } from "../CalendarMonth";
-import { CalendarProps } from "./Calendar.types";
 import observer from "./observer";
 
-export const Calendar = ({
-  wasAutoscrollOnFirstRenderMade,
-  onAutoscrollOnFirstRender,
-}: CalendarProps) => {
-  // dragging refs
-  const currentMovement = useRef(0);
-  const previousTouch = useRef<React.Touch>();
-  const slider = useRef<HTMLDivElement>();
-  const isDragging = useRef(false);
+let currentMovement = 0;
+let previousTouch: React.Touch | undefined;
 
-  const calendarDayNodeWidth = 88;
+let didScrollOnFirstRender = false;
 
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
+const calendarDayNodeWidth = 88;
+const SPACING = 3;
 
+const currentYear = new Date().getFullYear();
+const currentMonth = new Date().getMonth();
+
+export const Calendar = () => {
   const [months, setMonths] = useState<[year: number, month: number][]>([
     [currentYear, currentMonth],
   ]);
 
-  // store spacing between calendar day nodes,
-  // because it's necessary for calculating auto-scroll on mount
-  // Theme is used to get the corresponding value in pixels.
-  // For example, parseInt(theme.spacing(3)) will give us the
-  // pixels we need for calculation
   const theme = useTheme();
 
-  const SPACING = 3;
+  const slider = useRef<HTMLDivElement>();
 
   useEffect(() => {
     let id: number;
@@ -39,7 +30,7 @@ export const Calendar = ({
     const animate = () => {
       id = requestAnimationFrame(animate);
       if (slider.current) {
-        slider.current.style.left = `${currentMovement.current}px`;
+        slider.current.style.left = `${currentMovement}px`;
       }
     };
     animate();
@@ -66,7 +57,7 @@ export const Calendar = ({
             new Date(id[0], id[1] + 1).getTime() <
             new Date(currentYear, currentMonth).getTime()
           ) {
-            currentMovement.current -=
+            currentMovement -=
               (calendarDayNodeWidth + parseInt(theme.spacing(SPACING))) * 31;
             return [id, ...prevState];
           }
@@ -77,50 +68,34 @@ export const Calendar = ({
 
       observer.addEntry(element, callback);
     },
-    [currentMonth, currentYear, theme]
+    [theme]
   );
 
   const handleMouseDrag: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
 
     if (e.buttons === 1) {
-      isDragging.current = true;
-
       if (e.movementX >= -1 && e.movementX <= 1) return;
 
-      currentMovement.current += e.movementX;
+      currentMovement += e.movementX;
     }
   };
 
   const handleTouchDrag: React.TouchEventHandler<HTMLDivElement> = (e) => {
-    isDragging.current = true;
-
     // there can be multiple touches, take the first one
     const touch = e.touches[0];
 
-    if (previousTouch.current) {
-      const movementX = touch.pageX - previousTouch.current.pageX;
+    if (previousTouch) {
+      const movementX = touch.pageX - previousTouch.pageX;
 
-      currentMovement.current += movementX;
+      currentMovement += movementX;
     }
 
-    previousTouch.current = touch;
-  };
-
-  const handleMouseUp: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    e.preventDefault();
-
-    setTimeout(() => {
-      isDragging.current = false;
-    }, 0);
+    previousTouch = touch;
   };
 
   const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = (e) => {
-    setTimeout(() => {
-      isDragging.current = false;
-    }, 0);
-
-    previousTouch.current = undefined;
+    previousTouch = undefined;
   };
 
   /* Auto-scroll */
@@ -137,13 +112,13 @@ export const Calendar = ({
       // perform scroll
       const scrollTo = (calendarDayNodeWidth + spacingPX) * scrollMultiplier;
 
-      currentMovement.current -= scrollTo;
+      currentMovement -= scrollTo;
     },
     [theme]
   );
 
   useEffect(() => {
-    if (!wasAutoscrollOnFirstRenderMade) {
+    if (!didScrollOnFirstRender) {
       const currentDate = new Date();
       const today = currentDate.getDate();
       // Needed to prevent unstoppable infinite scroll after specific date
@@ -158,17 +133,9 @@ export const Calendar = ({
         setCurrentMovement(today);
       }
 
-      onAutoscrollOnFirstRender();
+      didScrollOnFirstRender = true;
     }
-  }, [
-    setCurrentMovement,
-    wasAutoscrollOnFirstRenderMade,
-    onAutoscrollOnFirstRender,
-    currentMonth,
-    currentYear,
-  ]);
-
-  const today = new Date().getDate();
+  }, [setCurrentMovement]);
 
   return (
     <Stack
@@ -177,12 +144,11 @@ export const Calendar = ({
       id="slider"
       onMouseMove={handleMouseDrag}
       onTouchMove={handleTouchDrag}
-      onMouseUp={handleMouseUp}
       onTouchEnd={handleTouchEnd}
       sx={{
         position: "relative",
         top: 0,
-        left: currentMovement.current,
+        left: currentMovement,
         userSelect: "none",
       }}
       draggable={false}

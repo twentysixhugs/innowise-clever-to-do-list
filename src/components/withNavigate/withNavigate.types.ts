@@ -1,4 +1,4 @@
-import { NavigateOptions, To } from "react-router-dom";
+import { NavigateFunction, NavigateOptions, To } from "react-router-dom";
 
 export type WithNavigateParams =
   | {
@@ -10,5 +10,5 @@ export type WithNavigateParams =
     };
 
 export type WithNavigateProps = {
-  navigate: () => void;
+  navigate: NavigateFunction;
 };

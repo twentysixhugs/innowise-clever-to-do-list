@@ -1,3 +1,4 @@
+import { NavigateFunction } from "react-router-dom";
 import { FormError } from "../../constants";
 import { ITaskInput } from "../../interfaces/TaskInput.interface";
 
@@ -7,7 +8,7 @@ export type TaskFormProps = {
   submitButtonText: string;
   cancelButtonText: string;
   title: string;
-  navigate: () => void;
+  navigate: NavigateFunction;
 };
 
 export type TaskFormState = {

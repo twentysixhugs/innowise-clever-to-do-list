@@ -7,6 +7,8 @@ import { useTasks } from "../../context/TasksStore/TasksStore";
 import { taskService } from "../../services/taskService";
 import { usePrevious } from "../../hooks/usePrevious";
 
+let wasRequestOnFirstRenderMade = false;
+
 const Overview = () => {
   const { appendTasks, resetTasks, tasks } = useTasks();
 
@@ -17,12 +19,8 @@ const Overview = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const [wasAutoscrollOnFirstRenderMade, setWasAutoscrollOnFirstRenderMade] =
-    useState(false);
-  const wasRequestOnFirstRenderMade = useRef<boolean>(false);
-
   useEffect(() => {
-    if (!tasks.length && !wasRequestOnFirstRenderMade.current) {
+    if (!tasks.length && !wasRequestOnFirstRenderMade) {
       taskService
         .getAllForUser()
         .then((tasksData) => {
@@ -38,12 +36,11 @@ const Overview = () => {
             }
           );
 
-          console.log("called 87");
           appendTasks(processedTasksData);
         })
         .finally(() => {
           setIsLoading(false);
-          wasRequestOnFirstRenderMade.current = true;
+          wasRequestOnFirstRenderMade = true;
         });
     } else {
       setIsLoading(false);
@@ -84,7 +81,7 @@ const Overview = () => {
         })
         .finally(() => {
           setIsLoading(false);
-          wasRequestOnFirstRenderMade.current = true;
+          wasRequestOnFirstRenderMade = true;
         });
     }
   }, [
@@ -96,20 +93,13 @@ const Overview = () => {
     appendTasks,
   ]);
 
-  const handleAutoscrollOnFirstRender = useCallback(() => {
-    setWasAutoscrollOnFirstRenderMade(true);
-  }, []);
-
   useEffect(() => {
     scrollTo(0, 0);
   }, []);
 
   return (
     <>
-      <Calendar
-        wasAutoscrollOnFirstRenderMade={wasAutoscrollOnFirstRenderMade}
-        onAutoscrollOnFirstRender={handleAutoscrollOnFirstRender}
-      />
+      <Calendar />
       {isLoading ? <Loader /> : <TasksList />}
     </>
   );
