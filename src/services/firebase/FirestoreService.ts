@@ -1,4 +1,3 @@
-import { db } from "../../init/firebase";
 import {
   DocumentData,
   getDocs,
@@ -12,28 +11,33 @@ import {
   DocumentReference,
 } from "firebase/firestore";
 import { UpdateData } from "firebase/firestore";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
-import { DatabaseService } from "./DatabaseService";
+import { FirebaseInitService } from "./FirebaseInitService";
+import { ProtectedDatabaseService } from "../abstract/ProtectedDatabaseService";
+import { FirebaseAuthService } from "./FirebaseAuthService";
 
-export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
-  protected user: User | null = null;
+export class FirestoreService<Input, Output> extends ProtectedDatabaseService<
+  Input,
+  Output
+> {
+  private firebase: FirebaseInitService;
+  protected authService: FirebaseAuthService;
 
-  constructor(collectionName: string) {
-    super(collectionName);
+  constructor(collectionName: string, authService: FirebaseAuthService) {
+    super(collectionName, authService);
 
-    const auth = getAuth();
+    this.authService = authService;
 
-    onAuthStateChanged(auth, (user) => {
-      this.user = user;
-    });
+    this.authService.observeAuthState();
+
+    this.firebase = new FirebaseInitService();
   }
 
   getAllForUser = async (): Promise<Output[]> => {
-    if (!this.user) {
+    if (!this.authService.isAuthenticated) {
       throw new Error("Authentication required");
     }
 
-    const q = query(this.collection, where("uid", "==", this.user.uid));
+    const q = query(this.collection, where("uid", "==", this.authService.uid));
 
     const snapshot = await getDocs(q);
 
@@ -46,7 +50,7 @@ export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
   };
 
   getAllByDayForUser = async (date: Date): Promise<Output[]> => {
-    if (!this.user) {
+    if (!this.authService.isAuthenticated) {
       throw new Error("Authentication required");
     }
 
@@ -58,7 +62,7 @@ export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
 
     const q = query(
       this.collection,
-      where("uid", "==", this.user.uid),
+      where("uid", "==", this.authService.uid),
       where("timestamp", ">=", new Date(year, month, day)),
       where("timestamp", "<", new Date(year, month, day + 1))
     );
@@ -74,11 +78,11 @@ export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
   };
 
   getOneForUserByPath = async (path: string): Promise<Output> => {
-    if (!this.user) {
+    if (!this.authService.isAuthenticated) {
       throw new Error("Authentication required");
     }
 
-    const docRef = doc(db, this.collectionName, path);
+    const docRef = doc(this.firebase.db, this.collectionName, path);
     const snapshot = await getDoc(docRef);
 
     if (snapshot.exists()) {
@@ -91,8 +95,48 @@ export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
     }
   };
 
+  createOneForUser = async (data: Input) => {
+    if (!this.authService.isAuthenticated) {
+      throw new Error("Authentication required");
+    }
+
+    const docRef = await addDoc(this.collection, {
+      ...data,
+      uid: this.authService.uid,
+    });
+
+    return await this.getOneForUserByRef(docRef);
+  };
+
+  updateOneForUser = async (
+    path: string,
+    data: { [T in keyof Input]?: Input[T] }
+  ) => {
+    if (!this.authService.isAuthenticated) {
+      throw new Error("Authentication required");
+    }
+
+    const docRef = doc(
+      this.firebase.db,
+      this.collectionName,
+      path
+    ) as DocumentReference<Input>;
+
+    return await updateDoc(docRef, data as UpdateData<Input>);
+  };
+
+  deleteOneForUser = async (path: string) => {
+    if (!this.authService.isAuthenticated) {
+      throw new Error("Authentication required");
+    }
+
+    const docRef = doc(this.firebase.db, this.collectionName, path);
+
+    return await deleteDoc(docRef);
+  };
+
   private getOneForUserByRef = async (ref: DocumentReference<DocumentData>) => {
-    if (!this.user) {
+    if (!this.authService.isAuthenticated) {
       throw new Error("Authentication required");
     }
 
@@ -106,45 +150,5 @@ export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
     } else {
       throw new Error("Document not found");
     }
-  };
-
-  createOneForUser = async (data: Input) => {
-    if (!this.user) {
-      throw new Error("Authentication required");
-    }
-
-    const docRef = await addDoc(this.collection, {
-      ...data,
-      uid: this.user.uid,
-    });
-
-    return await this.getOneForUserByRef(docRef);
-  };
-
-  updateOneForUser = async (
-    path: string,
-    data: { [T in keyof Input]?: Input[T] }
-  ) => {
-    if (!this.user) {
-      throw new Error("Authentication required");
-    }
-
-    const docRef = doc(
-      db,
-      this.collectionName,
-      path
-    ) as DocumentReference<Input>;
-
-    return await updateDoc(docRef, data as UpdateData<Input>);
-  };
-
-  deleteOneForUser = async (path: string) => {
-    if (!this.user) {
-      throw new Error("Authentication required");
-    }
-
-    const docRef = doc(db, this.collectionName, path);
-
-    return await deleteDoc(docRef);
   };
 }
