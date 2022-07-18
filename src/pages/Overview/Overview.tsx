@@ -4,10 +4,17 @@ import { Loader } from "../../components/Loader";
 import { TasksList } from "../../components/TasksList";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 import { useTasks } from "../../context/TasksStore/TasksStore";
-import { taskService } from "../../services/taskService";
+import { protectedTaskService } from "../../services/public/protectedTaskService";
 import { usePrevious } from "../../hooks/usePrevious";
+import { resetCalendar } from "../../components/Calendar/Calendar";
 
 let wasRequestOnFirstRenderMade = false;
+
+export function resetOverview() {
+  wasRequestOnFirstRenderMade = false;
+
+  resetCalendar();
+}
 
 const Overview = () => {
   const { appendTasks, resetTasks, tasks } = useTasks();
@@ -21,8 +28,8 @@ const Overview = () => {
 
   useEffect(() => {
     if (!tasks.length && !wasRequestOnFirstRenderMade) {
-      taskService
-        .getAllForUser()
+      protectedTaskService
+        .getAll()
         .then((tasksData) => {
           const processedTasksData = tasksData.map(
             ({ name, description, timestamp, isCompleted, id }) => {
@@ -60,8 +67,8 @@ const Overview = () => {
     ) {
       setIsLoading(true);
 
-      taskService
-        .getAllForUser()
+      protectedTaskService
+        .getAll()
         .then((tasksData) => {
           const processedTasksData = tasksData.map(
             ({ name, description, timestamp, isCompleted, id }) => {
@@ -75,7 +82,6 @@ const Overview = () => {
             }
           );
 
-          console.log("called 53");
           resetTasks();
           appendTasks(processedTasksData);
         })

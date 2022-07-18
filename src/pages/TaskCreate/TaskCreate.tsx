@@ -5,7 +5,7 @@ import { Loader } from "../../components/Loader";
 import { TaskForm } from "../../components/TaskForm";
 import { Toast } from "../../components/Toast";
 import { useTasks } from "../../context/TasksStore/TasksStore";
-import { taskService } from "../../services/taskService";
+import { protectedTaskService } from "../../services/public/protectedTaskService";
 
 const TaskCreate = () => {
   const { createTask } = useTasks();
@@ -22,15 +22,12 @@ const TaskCreate = () => {
 
       setServerError(null);
 
-      taskService
-        .createOneForUser({
+      protectedTaskService
+        .createOne({
           name,
           description,
           timestamp: Timestamp.fromDate(date),
           isCompleted: false,
-        })
-        .then((docRef) => {
-          return taskService.getOneForUserByRef(docRef);
         })
         .then((data) => {
           const { name, description, timestamp, id } = data;

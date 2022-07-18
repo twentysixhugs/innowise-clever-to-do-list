@@ -20,8 +20,8 @@ import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
 import { TaskEntryProps } from "./TaskEntry.types";
-import { taskService } from "../../services/taskService";
 import { Toast } from "../Toast";
+import { protectedTaskService } from "../../services/public/protectedTaskService";
 
 export const TaskEntry = ({
   id,
@@ -59,7 +59,7 @@ export const TaskEntry = ({
     setError("");
     deleteTask(id);
 
-    taskService.deleteOneForUser(id).catch((err) => {
+    protectedTaskService.deleteOne(id).catch((err) => {
       setError(err.message);
     });
   };
@@ -72,8 +72,8 @@ export const TaskEntry = ({
 
     setError("");
 
-    taskService
-      .updateOneForUser(id, { isCompleted: !isCompleted })
+    protectedTaskService
+      .updateOne(id, { isCompleted: !isCompleted })
       .catch((err) => {
         setError(err.message);
       });

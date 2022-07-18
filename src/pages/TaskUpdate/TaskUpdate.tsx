@@ -3,10 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Timestamp } from "firebase/firestore";
 import { TaskForm } from "../../components/TaskForm";
 import { useTasks } from "../../context/TasksStore/TasksStore";
-import { taskService } from "../../services/taskService";
 import { Loader } from "../../components/Loader";
 import { FirebaseError } from "@firebase/util";
 import { Toast } from "../../components/Toast";
+import { protectedTaskService } from "../../services/public/protectedTaskService";
 
 const TaskUpdate = () => {
   const { tasks, updateTask } = useTasks();
@@ -30,15 +30,15 @@ const TaskUpdate = () => {
 
       setServerError(null);
 
-      taskService
-        .updateOneForUser(id, {
+      protectedTaskService
+        .updateOne(id, {
           name,
           description,
           timestamp: Timestamp.fromDate(date),
           isCompleted: false,
         })
         .then(() => {
-          return taskService.getOneForUserByPath(id);
+          return protectedTaskService.getOneByPath(id);
         })
         .then((data) => {
           const { name, description, timestamp, id } = data;
