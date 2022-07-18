@@ -9,6 +9,12 @@ let previousTouch: React.Touch | undefined;
 
 let didScrollOnFirstRender = false;
 
+export function resetCalendar() {
+  currentMovement = 0;
+  previousTouch = undefined;
+  didScrollOnFirstRender = false;
+}
+
 const calendarDayNodeWidth = 88;
 const SPACING = 3;
 
