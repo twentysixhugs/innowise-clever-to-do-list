@@ -3,6 +3,7 @@ import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 import { useTasks } from "../../context/TasksStore/TasksStore";
+import { resetOverview } from "../../pages/Overview/Overview";
 
 export const SignOut = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export const SignOut = () => {
       navigate("/signin");
       resetSelectedDate();
       resetTasks();
+      resetOverview();
     });
   };
 

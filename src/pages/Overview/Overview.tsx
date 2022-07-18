@@ -6,8 +6,15 @@ import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateSto
 import { useTasks } from "../../context/TasksStore/TasksStore";
 import { protectedTaskService } from "../../services/public/protectedTaskService";
 import { usePrevious } from "../../hooks/usePrevious";
+import { resetCalendar } from "../../components/Calendar/Calendar";
 
 let wasRequestOnFirstRenderMade = false;
+
+export function resetOverview() {
+  wasRequestOnFirstRenderMade = false;
+
+  resetCalendar();
+}
 
 const Overview = () => {
   const { appendTasks, resetTasks, tasks } = useTasks();
