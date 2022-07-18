@@ -29,9 +29,6 @@ const TaskCreate = () => {
           timestamp: Timestamp.fromDate(date),
           isCompleted: false,
         })
-        .then((docRef) => {
-          return taskService.getOneForUserByRef(docRef);
-        })
         .then((data) => {
           const { name, description, timestamp, id } = data;
 

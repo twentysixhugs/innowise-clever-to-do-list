@@ -10,11 +10,9 @@ import {
   updateDoc,
   deleteDoc,
   DocumentReference,
-  onSnapshot,
-  Query,
 } from "firebase/firestore";
 import { UpdateData } from "firebase/firestore";
-import { getAuth, onAuthStateChanged, Unsubscribe, User } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { DatabaseService } from "./DatabaseService";
 
 export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
@@ -93,7 +91,7 @@ export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
     }
   };
 
-  getOneForUserByRef = async (ref: DocumentReference<DocumentData>) => {
+  private getOneForUserByRef = async (ref: DocumentReference<DocumentData>) => {
     if (!this.user) {
       throw new Error("Authentication required");
     }
@@ -115,10 +113,18 @@ export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
       throw new Error("Authentication required");
     }
 
-    return await addDoc(this.collection, { ...data, uid: this.user.uid });
+    const docRef = await addDoc(this.collection, {
+      ...data,
+      uid: this.user.uid,
+    });
+
+    return await this.getOneForUserByRef(docRef);
   };
 
-  updateOneForUser = async (path: string, data: UpdateData<Input>) => {
+  updateOneForUser = async (
+    path: string,
+    data: { [T in keyof Input]?: Input[T] }
+  ) => {
     if (!this.user) {
       throw new Error("Authentication required");
     }
@@ -129,7 +135,7 @@ export class ProtectedDatabaseService<Input, Output> extends DatabaseService {
       path
     ) as DocumentReference<Input>;
 
-    return await updateDoc(docRef, data);
+    return await updateDoc(docRef, data as UpdateData<Input>);
   };
 
   deleteOneForUser = async (path: string) => {
