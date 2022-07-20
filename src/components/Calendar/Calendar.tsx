@@ -111,11 +111,6 @@ export const Calendar = () => {
       // get spacing between days
       const spacingPX = parseInt(theme.spacing(SPACING));
 
-      // calculate scroll which is performed on first render
-      // that is, it should scroll to today
-      // so, if today is 16, it scrolls to this day
-
-      // perform scroll
       const scrollTo = (calendarDayNodeWidth + spacingPX) * scrollMultiplier;
 
       currentMovement -= scrollTo;
@@ -127,17 +122,9 @@ export const Calendar = () => {
     if (!didScrollOnFirstRender) {
       const currentDate = new Date();
       const today = currentDate.getDate();
-      // Needed to prevent unstoppable infinite scroll after specific date
-      // In other words, it may auto-scroll so much that it opens the next month
-      // So, if date is bigger than 17, it won't scroll further
-      if (currentMonth !== 1 && today >= 19) {
-        setCurrentMovement(18);
-      } else if (currentMonth === 1 && today >= 14) {
-        // if it's february
-        setCurrentMovement(11);
-      } else {
-        setCurrentMovement(today - 1);
-      }
+
+      // scroll to today on first render
+      setCurrentMovement(today - 1);
 
       didScrollOnFirstRender = true;
     }
