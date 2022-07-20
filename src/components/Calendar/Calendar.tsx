@@ -2,6 +2,7 @@ import { Stack, useTheme } from "@mui/material";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { CalendarMonth } from "../CalendarMonth";
+import { MonthId } from "./Calendar.types";
 import observer from "./observer";
 
 let currentMovement = 0;
@@ -22,7 +23,7 @@ const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth();
 
 export const Calendar = () => {
-  const [months, setMonths] = useState<[year: number, month: number][]>([
+  const [months, setMonths] = useState<MonthId[]>([
     [currentYear, currentMonth],
   ]);
 
@@ -47,29 +48,43 @@ export const Calendar = () => {
   }, []);
 
   const mountCallback = useCallback(
-    (id: [year: number, month: number]) => {
+    (id: MonthId) => {
       const element = document.getElementById(
         `${id[0]}-${id[1] + 1}`
       ) as HTMLDivElement;
 
-      const callback = (id: [year: number, month: number]) => {
+      const callback = (id: MonthId) => {
         setMonths((prevState) => {
-          if (
-            prevState.find((item) => item[0] === id[0] && item[1] === id[1])
-          ) {
+          if (prevState.find((item) => areMonthsEqual(item, id))) {
+            // If month was already loaded
             return prevState;
           }
-          if (
-            new Date(id[0], id[1] + 1).getTime() <
-            new Date(currentYear, currentMonth).getTime()
-          ) {
+
+          if (isMonthPast(id)) {
+            // Add month to the beginning, scroll to the end of month
+
             currentMovement -=
               (calendarDayNodeWidth + parseInt(theme.spacing(SPACING))) * 31;
             return [id, ...prevState];
           }
 
+          // Add month to the end
           return [...prevState, id];
         });
+      };
+
+      const areMonthsEqual = (monthId1: MonthId, monthId2: MonthId) => {
+        return monthId1[0] === monthId2[0] && monthId1[1] === monthId2[1];
+      };
+
+      const isMonthPast = (monthId: MonthId) => {
+        const year = monthId[0];
+        const month = monthId[1] + 1;
+
+        return (
+          new Date(year, month).getTime() <
+          new Date(currentYear, currentMonth).getTime()
+        );
       };
 
       observer.addEntry(element, callback);
