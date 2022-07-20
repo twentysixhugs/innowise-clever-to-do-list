@@ -48,6 +48,12 @@ export class SelectedDateStore extends React.Component<
     this.setState(newState);
   };
 
+  updateFullDate = (year: number, month: number, day: number) => {
+    this.update("year", year);
+    this.update("month", month);
+    this.update("day", day);
+  };
+
   render() {
     return (
       <SelectedDateContext.Provider
@@ -55,7 +61,7 @@ export class SelectedDateStore extends React.Component<
           selectedDay: this.state.selectedDay,
           selectedMonth: this.state.selectedMonth,
           selectedYear: this.state.selectedYear,
-          updateSelectedDate: this.update,
+          updateSelectedDate: this.updateFullDate,
           resetSelectedDate: this.reset,
         }}
       >
