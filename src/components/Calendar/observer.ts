@@ -1,6 +1,8 @@
+import { MonthId } from "./Calendar.types";
+
 class Observer {
   private entries: {
-    [elementId: string]: (id: [year: number, month: number]) => void;
+    [elementId: string]: (id: MonthId) => void;
   };
 
   private observedElements: Element[] = [];
@@ -15,8 +17,9 @@ class Observer {
     this.entries = {};
 
     const config = {
-      threshold: (window.innerWidth * 0.4) / 1536,
+      threshold: this.getThreshold(),
     };
+
     this.observer = new IntersectionObserver(this.onIntersection, config);
 
     const resizeObserver = new ResizeObserver(this.changeWindowSize);
@@ -29,14 +32,23 @@ class Observer {
       this.wasResizeObserverCalled = true;
       return;
     }
-    const lastEntry = entries[entries.length - 1];
 
     const config = {
-      threshold: (lastEntry.target.clientWidth * 0.4) / 1536,
+      threshold: this.getThreshold(),
     };
     this.observer = new IntersectionObserver(this.onIntersection, config);
 
     this.observedElements.forEach((el) => this.observer.observe(el));
+  };
+
+  private getThreshold = () => {
+    let threshold = (window.innerWidth * 0.4) / 1536;
+
+    while (threshold > 1) {
+      threshold /= 1.1;
+    }
+
+    return threshold;
   };
 
   private checkEntry = (entry: IntersectionObserverEntry) => {
@@ -58,10 +70,7 @@ class Observer {
     entries.forEach(this.checkEntry);
   };
 
-  public addEntry = (
-    element: Element,
-    callback: (id: [year: number, month: number]) => void
-  ) => {
+  public addEntry = (element: Element, callback: (id: MonthId) => void) => {
     this.entries[element.id] = callback;
     this.observer.observe(element);
     this.observedElements.push(element);

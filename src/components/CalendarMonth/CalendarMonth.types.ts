@@ -1,5 +1,7 @@
+import { MonthId } from "../Calendar/Calendar.types";
+
 export type CalendarMonthProps = {
-  mountCallback: (id: [year: number, month: number]) => void;
+  mountCallback: (id: MonthId) => void;
   year: number;
   month: number;
 };

@@ -14,7 +14,6 @@ import {
   CheckCircle,
   CircleOutlined,
 } from "@mui/icons-material";
-import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTasks } from "../../context/TasksStore/TasksStore";
@@ -22,6 +21,9 @@ import { StyledCardActions, StyledPaper } from "./TaskEntry.styles";
 import { TaskEntryProps } from "./TaskEntry.types";
 import { Toast } from "../Toast";
 import { protectedTaskService } from "../../services/public/protectedTaskService";
+import { DeleteConfirmation } from "./DeleteConfirmation";
+import { CollapsableDescription } from "./Description";
+import { ExpandMore } from "./ExpandMore";
 
 export const TaskEntry = ({
   id,
@@ -123,46 +125,13 @@ export const TaskEntry = ({
             <DeleteOutlined color="action" />
           </IconButton>
         </StyledCardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Typography component="p" variant="subtitle1" marginTop={1}>
-            {description}
-          </Typography>
-        </Collapse>
-        <Collapse in={confirmDeletion} timeout="auto" unmountOnExit>
-          <Typography
-            component="p"
-            variant="subtitle1"
-            fontSize="1rem"
-            marginTop={2}
-          >
-            Are you sure you want to delete this task?
-          </Typography>
-          <Stack direction="row" spacing={2} marginTop={2}>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={handleDeleteConfirm}
-            >
-              Delete
-            </Button>
-            <Button variant="contained" onClick={handleDeleteCancel}>
-              Cancel
-            </Button>
-          </Stack>
-        </Collapse>
+        <CollapsableDescription text={description} isExpanded={expanded} />
+        <DeleteConfirmation
+          isActive={confirmDeletion}
+          onDeleteConfirm={handleDeleteConfirm}
+          onDeleteCancel={handleDeleteCancel}
+        />
       </StyledPaper>
     </>
   );
 };
-
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  transition: "transform 0.2s ease-out",
-}));

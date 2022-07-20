@@ -14,6 +14,6 @@ export interface ISelectedDateContext {
   selectedDay: number;
   selectedMonth: number;
   selectedYear: number;
-  updateSelectedDate: (part: "day" | "month" | "year", value: number) => void;
+  updateSelectedDate: (year: number, month: number, day: number) => void;
   resetSelectedDate: () => void;
 }

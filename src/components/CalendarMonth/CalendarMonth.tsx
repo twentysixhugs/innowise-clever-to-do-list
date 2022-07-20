@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { DayOfWeek } from "../../constants";
 import { useSelectedDate } from "../../context/SelectedDateStore/SelectedDateStore";
 import { useTasks } from "../../context/TasksStore/TasksStore";
@@ -36,6 +36,15 @@ export const CalendarMonth = React.memo(
       return dayDate.getTime() === currentDate.getTime();
     }
 
+    const handleClickOnDay = useCallback(
+      (year: number, month: number, day: number): React.MouseEventHandler => {
+        return function (e) {
+          updateSelectedDate(year, month, day);
+        };
+      },
+      [updateSelectedDate]
+    );
+
     return (
       <Stack id={`${year}-${month + 1}`} direction="row">
         {Array.from({ length: getLastDayInMonth(month, year) }).map(
@@ -63,11 +72,7 @@ export const CalendarMonth = React.memo(
                 month === selectedMonth &&
                 year === selectedYear
               }
-              onClick={() => {
-                updateSelectedDate("year", year);
-                updateSelectedDate("month", month);
-                updateSelectedDate("day", i + 1);
-              }}
+              onClick={handleClickOnDay(year, month, i + 1)}
             />
           )
         )}
