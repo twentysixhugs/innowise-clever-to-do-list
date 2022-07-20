@@ -15,18 +15,34 @@ class TaskForm extends React.Component<TaskFormProps, TaskFormState> {
   static contextType = SelectedDateContext;
   context: React.ContextType<typeof SelectedDateContext> | undefined;
 
-  state: TaskFormState = {
-    input: {
-      name: this.props.initialTaskData?.name || "",
-      description: this.props.initialTaskData?.description || "",
-      date: this.props.initialTaskData?.date || null,
-    },
-    errors: {
-      name: "",
-      description: "",
-      date: "",
-    },
-  };
+  constructor(props: TaskFormProps) {
+    super(props);
+
+    const { initialTaskData } = this.props;
+
+    let name, description, date;
+
+    if (initialTaskData) {
+      ({ name, description, date } = initialTaskData);
+    } else {
+      name = "";
+      description = "";
+      date = null;
+    }
+
+    this.state = {
+      input: {
+        name,
+        description,
+        date,
+      },
+      errors: {
+        name: "",
+        description: "",
+        date: "",
+      },
+    };
+  }
 
   componentDidMount() {
     const { selectedYear, selectedMonth, selectedDay } = this.context!;
